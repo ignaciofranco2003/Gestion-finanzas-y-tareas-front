@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inicio</title>
+
+    <!--imagen bootstrap-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!--bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <style>
+      .navbar{
+        background-color: #1BB521;
+      }
+      .agrupacion{
+        font-size: 1.3rem;
+      }
+      i{
+        font-size: 2.2rem;
+      }
+      /*main*/
+      .boton-ingresos, .boton-ahorros, .boton-gastos {
+          position: relative;
+          border: 1px solid black;
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+          width: 80%;
+          height: 50%;
+      }
+      .boton-ingresos:hover, .boton-ahorros:hover, .boton-gastos:hover{
+        opacity: 0.8;
+      }
+      .boton-ingresos::before, .boton-ahorros::before, .boton-gastos::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          opacity: 0.2;
+          z-index: 0;
+      }
+      /* "https://drive.google.com/thumbnail?id=&sz=w1000" */
+      .boton-ingresos::before {
+          background-image: url("https://drive.google.com/thumbnail?id=1zDD2K13iCYdFnRC4uDfEdeyqoc7yl9EO&sz=w1000");
+          /* 1zDD2K13iCYdFnRC4uDfEdeyqoc7yl9EO */
+      }
+      .boton-ahorros::before {
+          background-image: url("https://drive.google.com/thumbnail?id=1vVw2b833ZIRSqAnVQiHFkzAAzSyIgwLt&sz=w1000");
+          /* 1vVw2b833ZIRSqAnVQiHFkzAAzSyIgwLt */
+      }
+      .boton-gastos::before {
+          background-image: url("https://drive.google.com/thumbnail?id=1ZQKIR_h2nIPRbs3nucw4k9aUHgo6n5m6&sz=w1000");
+          /* 1ZQKIR_h2nIPRbs3nucw4k9aUHgo6n5m6 */
+      }
+      .texto-boton {
+          position: relative;
+          z-index: 1;
+          text-decoration: none;
+          color: black;
+          font-size: 1.5rem;
+          font-weight: bold;
+          font-family: sans-serif;
+      }
+      .container{
+        background-color: #8EC1E3;
+        border: none;
+        border-radius: 5px;
+        height: 150px;
+      }
+      .divisores{
+        border: 1px solid #0005;
+        width: 80%;
+      }
+      .izq{
+        width: 50%;
+        height: 100%;
+      }
+      .der {
+        width: 50%;
+        display: flex;
+        justify-content: center; 
+        align-items: center;     
+        height: 100%;
+      }
+      .caja {
+        border-radius: 5px;
+        height: 36.5rem;
+        width: 80%; 
+        text-align: center;
+        margin-top: 2rem;
+        background-color: #D9D9D9;
+        background-image: url("https://drive.google.com/thumbnail?id=147rubQN_X4iRJjNmq00xXHjAhV7-eYqJ&sz=w1000");
+        /* 147rubQN_X4iRJjNmq00xXHjAhV7-eYqJ */
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+      }
+      /*li de la caja*/
+      li{
+        font-size: 1.5rem;
+        margin-left: 50px;
+        border-bottom: 1px solid black;
+        width: 80%;
+      }
+      .boton-mas{
+        width: 20%;
+      }
+      .vermas-tolist{
+        color: white;
+        text-decoration: none;
+      }
+      .tilde{
+        position: absolute;
+        right: 10%;
+        bottom: 14%;
+        font-size: 8rem;
+      }
+      li:nth-child(5), li:nth-child(6), li:nth-child(7){
+        width: 50%;
+      } 
+    </style>
+
+    <!--Navbar-->
+    <body data-bs-theme="light"> <!--modo oscuro-->  
+    <nav class="navbar">
+      <div class="container-fluid">
+        <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>      
+        <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
+          <p class="mb-0">Usuario</p>
+          <i class="bi bi-person-circle ms-2"></i>
+        </a>
+      </div>
+    </nav>
+
+    <!--main-->
+    <div class="container-fluid main">
+        <div class="row d-flex">
+          <!-- Lado izquierdo -->
+          <div class="izq text-center">
+            <button class="boton-ingresos container" onclick="ingresos()"><a class="texto-boton" href="/home-usuario/ingresos">INGRESOS</a></button>
+            <div class="divisores container-fluid text-center" > </div>
+            <button class="boton-ahorros container" onclick="ahorros()"><a class="texto-boton" href="/home-usuario/ahorros">AHORROS</a></button>
+            <div class="divisores container-fluid text-center"> </div>
+            <button class="boton-gastos container" onclick="gastos()"><a class="texto-boton" href="/home-usuario/gastos">GASTOS</a></button>
+          </div>
+          <!-- Lado derecho -->
+          <div class="der d-flex">
+            <div class="caja">
+              <h1 class="mt-4 text-center">TAREAS</h1>
+              <ul class="text-start">
+                <li class="mt-4">Pasear al perro</li>
+                <li class="mt-4">Pagar las cuentas</li>
+                <li class="mt-4">Comprar la comida</li>
+                <li class="mt-4">Pasear al perro</li>
+                <li class="mt-4">Clases de natacion</li>
+                <li class="mt-4">Ir al medico</li>
+                <li class="mt-4">Turno de padel</li>         
+              </ul>
+              <button class="btn btn-dark mt-2 boton-mas"><a class="vermas-tolist" href="/home-usuario/tareas">VER TAREAS</a></button>
+              <i class="bi bi-clipboard-check tilde"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="logoutButton">logout</button>
+
+      <script>
+          document.getElementById("logoutButton").addEventListener("click", function(event) {
+              event.preventDefault(); // Evita la redirección inmediata
+      
+              if (confirm("¿Estás seguro de que deseas cerrar la sesión?")) {
+                  window.location.href = "/logout"; // Redirige solo si se confirma
+              }
+          });
+
+
+          function ingresos(){
+            window.location.href = "/home-usuario/ingresos";
+          }
+          function ahorros(){
+            window.location.href = "/home-usuario/ahorros";
+          }
+          function gastos(){
+            window.location.href = "/home-usuario/gastos";
+          }
+      </script>
+    <!--script de bootstrap-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="js/temaOscuro.js"></script>
+  </body>
+</html>

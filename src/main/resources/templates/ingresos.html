@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ingresos</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+    <style>
+        body {
+            background-image: url("https://drive.google.com/thumbnail?id=17ceyiDOZVRZa9_adA1VeEveRyjr04pR4&sz=w1000");
+            background-size: contain;
+        }
+        .navbar {
+            background-color: #1BB521;
+        }
+        .agrupacion {
+            font-size: 1.3rem;
+        }
+        i {
+            font-size: 2.2rem;
+        }
+        .boton-ingresos, .boton-ahorros, .boton-gastos {
+            position: relative;
+            border: 1px solid black;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            width: 80%;
+            height: 50%;
+        }
+        .boton-ingresos:hover, .boton-ahorros:hover, .boton-gastos:hover {
+            opacity: 0.8;
+        }
+        .container {
+            background-color: #8EC1E3;
+            border: none;
+            border-radius: 5px;
+            height: 150px;
+        }
+        .izq {
+            width: 50%;
+            height: 100%;
+        }
+        .der {
+            width: 50%;
+            display: flex;
+            justify-content: center; 
+            align-items: center;     
+            height: 100%;
+        }
+        .caja {
+            border-radius: 5px;
+            height: 30rem;
+            width: 80%;
+            text-align: center;
+            margin-top: 5.5rem;
+            background-color: #D9D9D9;
+            position: relative;
+        }
+        .caja h1, .caja h2, .caja ul, .caja button {
+            position: relative;
+            z-index: 1; 
+        }
+        li {
+            font-size: 1.5rem;
+            margin-left: 50px;
+            border-bottom: 1px solid black;
+            width: 80%;
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .boton-mas {
+            width: 20%;
+        }
+        .contenedor-izq {
+            margin-top: 22%;
+            width: 60%;
+            height: 20rem;
+            padding-top: 20px;
+        }
+        form {
+            flex-direction: column;
+        }
+        .form-select, .form-control {
+            width: 17rem;
+            margin-left: 4.5rem;
+        }
+        .vermas-boton{
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>      
+            <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
+                <p class="mb-0">Usuario</p>
+                <i class="bi bi-person-circle ms-2"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="container-fluid main">
+        <div class="row d-flex">
+            <!-- Lado izquierdo -->
+            <div class="izq text-center">
+                <div class="container contenedor-izq">
+                    <h1 class="container-fluid text-center ingreso-titulo mt-2">INGRESO</h1>
+                    <form class="row g-3 needs-validation d-flex" novalidate id="ingresoForm">
+                        <div class="col-md-3 position-relative">
+                            <select class="form-select mt-4" id="categoriaIngreso" required>
+                                
+                            </select>
+                            <div class="invalid-tooltip">
+                                Por favor! selecciona una categoría de ingreso.
+                            </div>
+                        </div>
+                        <div class="col-md-3 position-relative mt-4">
+                            <input type="number" class="form-control" placeholder="$999" id="montoIngreso" required>
+                            <div class="invalid-tooltip">
+                                Por favor, ingresa un número válido.
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button class="btn btn-dark" type="submit">AGREGAR</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Lado derecho -->
+            <div class="der d-flex">
+                <div class="caja">
+                    <h1 class="mt-4 text-center">TOTAL MES</h1>
+                    <h2 class="precio mt-4">$<span id="totalIngresos">0</span></h2>
+                    <ul class="text-start" id="listaIngresos">
+                    </ul>
+                    <button class="btn btn-dark mt-3 boton-mas"><a class="vermas-boton" href="ingresos2.html">VER MAS</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <button onclick="obtenerIngresos()">PRUEBA</button> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        
+
+        // Lógica para manejar el envío del formulario
+        document.getElementById('ingresoForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Evitar el envío por defecto del formulario
+            
+            const monto = parseFloat(document.getElementById('montoIngreso').value);
+            const categoriaId = parseInt(document.getElementById('categoriaIngreso').value);
+
+            if (!isNaN(monto) && !isNaN(categoriaId)) {
+                // Hacer la solicitud al endpoint
+                // console.log(categoriaId);
+                const response = await enviarIngreso(monto, categoriaId);
+                if (response.ok) {
+                        // Usar SweetAlert para mostrar una alerta de confirmación
+                        Swal.fire({
+                            title: "Ingreso creado exitosamente",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Recargar la página si el usuario hace clic en "OK"
+                            }
+                        });
+                } else {
+                    alert("Error al crear el ingreso: " + response.statusText);
+                }
+            } else {
+                if (!isNaN(categoriaId)) {
+                    Swal.fire({
+                            title: "Por favor, ingrese un monto",
+                            icon: "warning",
+                            confirmButtonText: "OK"
+                        })
+                }else{
+                    Swal.fire({
+                            title: "Por favor, ingrese una categoria",
+                            icon: "warning",
+                            confirmButtonText: "OK"
+                        })
+                }
+            }
+        });
+
+        async function enviarIngreso(monto, categoriaId) {
+            const endpoint = '/ingresos/crear';
+
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded' 
+                },
+                body: new URLSearchParams({
+                    monto: monto,
+                    categoriaId: categoriaId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+                .then(data => {
+                    // Usar SweetAlert para mostrar una alerta de confirmación
+                        Swal.fire({
+                            title: "Ingreso creado exitosamente",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                document.getElementById('ingresoForm').reset();
+                                document.getElementById('categoriaIngreso').value = "";
+                                obtenerIngresos();
+                            }
+                        });
+                })
+                .catch(error => {
+                    Swal.fire({
+                            title: "No fue posible agregar el ingreso, verifique los campos",
+                            icon: "warning",
+                            confirmButtonText: "OK"
+                        })
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", async function() {
+            obtenerIngresos();
+            const endpoint = "http://localhost:8080/backof/categorias-ingreso/all"; // Asegúrate de que el endpoint sea correcto
+            const selectCategoriaIngreso = document.getElementById('categoriaIngreso');
+
+            // Agregar opción por defecto
+            const defaultOption = document.createElement('option');
+            defaultOption.value = ""; // O puedes usar 'null' si prefieres
+            defaultOption.textContent = "Seleccione una opción";
+            defaultOption.selected = true; // Seleccionar esta opción por defecto
+            defaultOption.disabled = true; // Deshabilitar para evitar selección
+            selectCategoriaIngreso.appendChild(defaultOption);
+
+            try {
+                const response = await fetch(endpoint);
+                if (!response.ok) throw new Error('Error al obtener las categorías');
+                
+                const categorias = await response.json();
+                categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.id;
+                    option.textContent = categoria.nombre;
+                    selectCategoriaIngreso.appendChild(option);
+                });
+            } catch (error) {
+                console.error(error.message);
+            }
+        });
+
+        async function obtenerIngresos() {
+            const endpointIngresos = '/ingresos/obtener';
+
+            try {
+                const [categorias, response] = await Promise.all([obtenerCategorias(), fetch(endpointIngresos, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+                    }
+                })]);
+
+                if (!response.ok) {
+                    throw new Error(`Error en la red: ${response.status}`);
+                }
+
+                const ingresos = await response.json();
+
+                // Objetos para almacenar los totales
+                const totalPorCategoria = {};
+                let totalGeneral = 0;
+
+                // Iterar sobre los ingresos y calcular totales
+                ingresos.forEach(ingreso => {
+                    const categoriaId = ingreso.categoriaId;
+                    const categoriaNombre = categorias[categoriaId]; // Obtener el nombre de la categoría
+                    const monto = ingreso.monto;
+
+                    // Sumar al total de la categoría
+                    if (!totalPorCategoria[categoriaId]) {
+                        totalPorCategoria[categoriaId] = { total: 0, nombre: categoriaNombre || 'Desconocido' }; // Manejar caso donde no hay nombre
+                    }
+                    totalPorCategoria[categoriaId].total += monto;
+
+                    // Sumar al total general
+                    totalGeneral += monto;
+                });
+
+                // Actualizar el total general en la interfaz
+                document.getElementById('totalIngresos').innerText = totalGeneral.toFixed(2);
+
+                // Crear la lista de totales por categoría
+                const listaIngresos = document.getElementById('listaIngresos');
+                listaIngresos.innerHTML = ''; // Limpiar la lista existente
+                for (const [categoriaId, { total, nombre }] of Object.entries(totalPorCategoria)) {
+                    const li = document.createElement('li');
+                    li.textContent = `${nombre}: $${total.toFixed(2)}`; // Mostrar el nombre y ID
+                    listaIngresos.appendChild(li);
+                }
+
+            } catch (error) {
+                console.error("Hubo un problema con la solicitud de ingresos:", error);
+            }
+        }
+
+
+        async function obtenerCategorias() {
+            const endpointCategorias = 'http://localhost:8080/backof/categorias-ingreso/all';
+
+            try {
+                const response = await fetch(endpointCategorias, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error en la red: ${response.status}`);
+                }
+
+                const categorias = await response.json();
+                return categorias.reduce((acc, categoria) => {
+                    acc[categoria.id] = categoria.nombre; // Mapa de ID a nombre
+                    return acc;
+                }, {});
+
+            } catch (error) {
+                console.error("Hubo un problema con la solicitud de categorías:", error);
+            }
+        }
+
+    </script>
+    
+</body>
+</html>

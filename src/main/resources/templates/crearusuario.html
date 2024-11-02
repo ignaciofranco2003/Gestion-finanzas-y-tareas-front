@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style-crearusuario.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear usuario</title>
+
+    <!--Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!--Iconos Bootstrap-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!--CSS ESTILOS-->
+    <style>
+        /*----------NAVBAR SECCION-----------*/
+        body {
+            background-image: url("https://drive.google.com/thumbnail?id=1HulCrn-LlhROS6nb-jCkdvubxTRp1QDy&sz=w1000");
+            background-size: contain;
+        }
+
+        .navbar{
+            background-color: #1BB521;
+            height: 70px;
+            opacity: 0.7;
+        }
+
+        .navbar i{
+            font-size: 35px;
+            color: black;
+        }
+
+        .nombre-web{
+            color: black;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        /*---------LOGIN SECCION-----------*/
+        .login {
+            border-radius: 10px;
+            background-color: #8EC1E3;
+            flex-direction: column;
+            margin-top: 9.5rem;
+            padding: 4rem 1rem 2rem 0;
+            width: 35rem;
+            box-sizing: border-box;
+        }
+
+        /*----------INPUTS-----------*/
+        .input-group-text {
+            background-color: transparent;
+            border: none;
+            width: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        input {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid black;
+            width: 17rem;
+        }
+
+        .logo i{
+            display: flex;
+            justify-content: center;
+            opacity: 0.7;
+            font-size: 20px;
+
+        }
+
+        input::placeholder {
+            font-size: 1.2rem;
+        }
+
+        .btn{
+            background-color: gray;
+            opacity: 0.7;
+            border: none;
+            margin-left: 1rem;
+        }
+
+        .btn:hover{
+            background-color: gray;
+            opacity: 1;
+            color: black;
+        }
+
+        .crear-usuario{
+            color: gray;
+        }
+        
+        a{
+            text-decoration: none;
+        }
+
+        p{
+            margin-left: 15.5px;
+        }
+        input:focus {
+            outline: none;
+            opacity: 0.8;
+        }
+
+        .btn.active {
+            background-color: #1BB521; /* Cambia el color cuando ambos campos están completos */
+            color: white; /* Cambia el color del texto si es necesario */
+        }
+        .error-msg {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+
+    <!--Navbar-->
+    <nav class="container-fluid navbar d-flex justify-content-center align-items-center">
+        <i class="bi bi-activity"></i>
+        <p class="nombre-web ms-2">Nombre Pagina</p>
+    </nav>
+
+            <form class="container login text-center d-flex flex-column align-items-center" id="registerForm" style="height: 27rem;" onsubmit="return registerUser(event)">
+                <!--Email-->
+                <div class="input-group logo mb-4">
+                    <span class="input-group-text">
+                        <i class="bi bi-envelope-at"></i>
+                    </span>
+                    <input type="email" id="email" required placeholder="Email">
+                    <span class="error-msg" id="emailError">Por favor ingresa un email válido. Ej: ejemplo@ejemplo.com</span>
+                    <span class="error-msg mb-0" id="emailUsedError" style="width: 35rem;">El email ya esta en uso</span>
+                </div>
+                <!--Usuario-->
+                <div class="input-group logo mb-4">
+                    <span class="input-group-text">
+                        <i class="bi bi-person-plus"></i>
+                    </span>
+                    <input type="text" id="username" required placeholder="Usuario">
+                    <span class="error-msg" id="usernameError">El nombre de usuario debe tener entre 4 y 20 caracteres.</span>
+                </div>
+
+
+                <!--Contraseña-->
+                <div class="input-group logo mb-4">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" id="password" required placeholder="Contraseña">
+                    <span class="error-msg" id="passwordError">La contraseña debe tener entre 4 y 16 caracteres.</span>
+                </div>
+
+
+
+                <!--confirmar contraseña-->
+                <div class="input-group logo mb-0">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" id="confirmPassword" required placeholder="Confirmar Contraseña">
+                    <span class="error-msg mb-2" id="confirmPasswordError" style="width: 35rem;">Las contraseñas no coinciden.</span>                    
+                </div>
+
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary" id="createbutton">CREAR USUARIO</button>
+                </div>
+                <div class="crear-usuario mt-4">
+                    <p>
+                        Ya tengo un usuario | <a class="volver-a-inicio" href="/login">Volver a inicio de sesión</a>
+                    </p>
+                </div>
+            </form>
+
+
+    <script>
+
+        const emailError = document.getElementById('emailError');
+        const usernameError = document.getElementById('usernameError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+        // Limpiar mensajes de error
+        emailError.style.display = 'none';
+        usernameError.style.display = 'none';
+        passwordError.style.display = 'none';
+        confirmPasswordError.style.display = 'none';
+        emailUsedError.style.display = 'none';
+
+
+
+        async function registerUser(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de la forma tradicional
+
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Verificar que las contraseñas coincidan
+            if (password !== confirmPassword) {
+                // Swal.fire({
+                //             title: "Las contraseñas no coinciden. Por favor, inténtelo de nuevo.",
+                //             icon: "warning",
+                //             confirmButtonText: "OK"
+                //         });           
+                confirmPasswordError.style.display = 'block';
+                emailError.style.display = 'none';
+                usernameError.style.display = 'none';
+                passwordError.style.display = 'none';
+                emailUsedError.style.display = 'none';
+                return; // Detener la ejecución si no coinciden
+            }
+
+            // Verificar el formato del email
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                // Swal.fire({
+                //             title: "Por favor ingresa un email válido.",
+                //             text: "Formato: algo@algo.algo",
+                //             icon: "warning",
+                //             confirmButtonText: "OK"
+                //         });
+                emailError.style.display = 'block';
+                usernameError.style.display = 'none';
+                passwordError.style.display = 'none';
+                confirmPasswordError.style.display = 'none';
+                emailUsedError.style.display = 'none';
+                return;
+            }
+
+            // Verificar longitud del nombre de usuario
+            if (username.length < 4 || username.length > 20) {
+                // Swal.fire({
+                //     title: "El nombre de usuario debe tener entre 4 y 20 caracteres.",
+                //     icon: "warning",
+                //     confirmButtonText: "OK"
+                // });
+                usernameError.style.display = 'block';
+                emailError.style.display = 'none';
+                passwordError.style.display = 'none';
+                confirmPasswordError.style.display = 'none';
+                emailUsedError.style.display = 'none';
+                return;
+            }
+
+            // Verificar longitud de la contraseña
+            if (password.length < 4 || password.length > 16) {
+                // Swal.fire({
+                //     title: "La contraseña debe tener entre 4 y 16 caracteres.",
+                //     icon: "warning",
+                //     confirmButtonText: "OK"
+                // });
+                passwordError.style.display = 'block'; 
+                emailError.style.display = 'none';
+                usernameError.style.display = 'none';
+                confirmPasswordError.style.display = 'none';
+                emailUsedError.style.display = 'none';
+                return;
+            }
+
+
+            const userData = {
+                email: email,
+                username: username,
+                password: password
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/users/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    // Redirigir a la página de inicio de sesión
+                    Swal.fire({
+                            title: "Usuario creado exitosamente",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/';; // Recargar la página si el usuario hace clic en "OK"
+                            }
+                        });
+                } else {
+                    const errorText = await response.text();
+                    // Swal.fire({
+                    //     title: `Error: ${errorText}`,
+                    //     icon: "warning",
+                    //     confirmButtonText: "OK"
+                    // });
+                    emailUsedError.style.display = 'block';
+                    emailError.style.display = 'none';
+                    usernameError.style.display = 'none';
+                    passwordError.style.display = 'none';
+                    confirmPasswordError.style.display = 'none';
+
+                }
+            } catch (error) {
+                console.error('Error al crear usuario:', error);
+                const errorText = await response.text();
+                    Swal.fire({
+                            title: "Hubo un error al crear el usuario",
+                            icon: "warning",
+                            confirmButtonText: "OK"
+                        }); 
+            }
+        }
+
+
+        // Script para cambiar el color del botón "CREAR USUARIO"
+
+        const createButton = document.getElementById('createbutton');
+
+        function checkInputs() {
+            if (email.value && username.value && password.value && confirmPassword.value) {
+                createButton.classList.add('active'); // Agrega la clase para cambiar el color
+            } else {
+                createButton.classList.remove('active'); // Quita la clase si no están llenos
+            }
+        }
+
+        email.addEventListener('input', checkInputs);
+        username.addEventListener('input', checkInputs);
+        password.addEventListener('input', checkInputs);
+        confirmPassword.addEventListener('input', checkInputs);
+
+
+    </script>
+</body>
+</html>

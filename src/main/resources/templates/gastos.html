@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gastos</title>
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    body {
+      background-image: url("https://drive.google.com/thumbnail?id=17ceyiDOZVRZa9_adA1VeEveRyjr04pR4&sz=w1000");
+      background-size: contain;
+    }
+    .navbar {
+      background-color: #1BB521;
+    }
+    .agrupacion {
+      font-size: 1.3rem;
+    }
+    i {
+      font-size: 2.2rem;
+    }
+    .boton-ingresos, .boton-ahorros, .boton-gastos {
+      position: relative;
+      border: 1px solid black;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      width: 80%;
+      height: 50%;
+    }
+    .boton-ingresos:hover, .boton-ahorros:hover, .boton-gastos:hover {
+      opacity: 0.8;
+    }
+    .boton-ingresos::before, .boton-ahorros::before, .boton-gastos::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.2;
+      z-index: 0;
+    }
+    .boton-ingresos::before {
+      background-image: url(imagenes/INGRESOS.png);
+    }
+    .boton-ahorros::before {
+      background-image: url(imagenes/AHORROS.png);
+    }
+    .boton-gastos::before {
+      background-image: url(imagenes/GASTOS.png);
+    }
+    .texto-boton {
+      position: relative;
+      z-index: 1;
+      text-decoration: none;
+      color: black;
+      font-size: 1.5rem;
+      font-weight: bold;
+      font-family: sans-serif;
+    }
+    .container {
+      background-color: #8EC1E3;
+      border: none;
+      border-radius: 5px;
+      height: 150px;
+    }
+    .izq {
+      width: 50%;
+      height: 100%;
+    }
+    .der {
+      width: 50%;
+      display: flex;
+      justify-content: center; 
+      align-items: center;
+      height: 100%;
+    }
+    .caja {
+      border-radius: 5px;
+      height: 39rem;
+      width: 80%;
+      text-align: center;
+      margin-top: 1rem;
+      background-color: #D9D9D9;
+      position: relative;
+    }
+    .caja canvas {
+      width: 23rem !important;
+      height: 370px !important;
+      margin-left: 7rem;
+      margin-top: 2.5rem;
+    }
+    .contenedor-izq {
+      margin-top: 12rem;
+      width: 60%;
+      height: 18rem;
+      padding-top: 20px;
+    }
+    form {
+      flex-direction: column;
+    }
+    .form-select, .form-control {
+      width: 17rem;
+      margin-left: 4.5rem;
+    }
+    h2 {
+      margin-bottom: -2rem;
+    }
+    .diferencia {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container-fluid">
+      <button onclick="cambiarTema()" class="btn rounded-fill">
+        <i id="dl-icon" class="bi bi-moon-fill"></i>
+      </button>      
+      <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
+        <p class="mb-0">Usuario</p>
+        <i class="bi bi-person-circle ms-2"></i>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="container-fluid main">
+    <div class="row d-flex">
+      
+      <!-- lado derecho -->
+      <div class="izq text-center">
+        <div class="container contenedor-izq">
+          <h1 class="container-fluid text-center ingreso-titulo">GASTO</h1>
+          <form class="row g-3 needs-validation d-flex" novalidate id="gastosForm">
+            <div class="col-md-3 position-relative">
+              <select class="form-select mt-3" id="categoria" required>
+                <option value="" disabled selected>Selecciona una categoría</option>
+              </select>
+            </div>
+            <div class="col-md-3 position-relative mt-3">
+              <input type="number" class="form-control" id="monto" required placeholder="Monto gastado $999">
+            </div>
+            <div class="col-12 mt-4">
+              <button type="submit" class="btn btn-dark">AGREGAR</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Lado izquierdo -->
+      <div class="der d-flex">
+        <div class="caja">
+          <h2 class="mt-3">Distribución de Gastos</h2>
+          <canvas id="myChart"></canvas>
+          <div class="mt-3">
+            <h4>Editar gastos</h4>
+            <select class="form-select w-50 mx-auto" id="categoriaEliminar">
+              <option value="" disabled selected>Selecciona una categoría para eliminar el monto</option>
+            </select>
+            <input type="number" class="form-control w-50 mx-auto mt-2" id="montoEliminar" placeholder="monto a eliminar $999">
+            <button class="btn btn-danger mt-2" onclick="eliminarGasto()">ELIMINAR</button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="js/temaOscuro.js"></script>
+  <!-- Bootstrap y Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!--JavaScript-->
+  <script>
+    const datosGastos = { 'Alquiler': 0, 'Comida': 0, 'Transporte': 0, 'Entretenimiento': 0, 'Otros': 0 };
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(datosGastos),
+        datasets: [{
+          data: Object.values(datosGastos),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',   
+            'rgba(54, 162, 235, 0.8)',   
+            'rgba(255, 159, 64, 0.8)',   
+            'rgba(75, 192, 192, 0.8)',   
+            'rgba(153, 102, 255, 0.8)'   
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          }
+        }
+      }
+    });
+
+    function actualizarGrafico() {
+      myChart.data.datasets[0].data = Object.values(datosGastos);
+      myChart.update();
+    }
+
+    document.getElementById('gastosForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const categoria = document.getElementById('categoria').value;
+      const monto = parseFloat(document.getElementById('monto').value);
+      if (categoria && !isNaN(monto)) {
+        datosGastos[categoria] += monto;
+        actualizarGrafico();
+        document.getElementById('gastosForm').reset();
+      }
+    });
+
+    function eliminarGasto() {
+      const categoria = document.getElementById('categoriaEliminar').value;
+      const monto = parseFloat(document.getElementById('montoEliminar').value);
+      if (categoria && !isNaN(monto) && datosGastos[categoria] >= monto) {
+        datosGastos[categoria] -= monto;
+        actualizarGrafico();
+        document.getElementById('categoriaEliminar').value = '';
+        document.getElementById('montoEliminar').value = '';
+      }
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // URL del endpoint
+      const endpoint = "http://localhost:8080/backof/categorias-gasto/all";
+      
+      // Select donde se mostrarán las categorías
+      const selectCategoria = document.getElementById('categoria');
+      const selectCategoriaEliminar = document.getElementById('categoriaEliminar');
+
+      // Función para cargar las categorías desde el endpoint
+      async function cargarCategorias() {
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) {
+            throw new Error('Error al obtener las categorías');
+          }
+          
+          // Convertimos la respuesta a JSON
+          const categorias = await response.json();
+
+          // Limpiamos las opciones actuales
+          selectCategoria.innerHTML = '<option value="" disabled selected>Selecciona una categoría</option>';
+          selectCategoriaEliminar.innerHTML = '<option value="" disabled selected>Selecciona una categoría para eliminar el monto</option>';
+
+          // Añadimos cada categoría como una opción en el menú
+          categorias.forEach(categoria => {
+            const option = document.createElement('option');
+            option.value = categoria.nombre; // O el nombre del campo que representa el nombre de la categoría en JSON
+            option.textContent = categoria.nombre;
+            
+            // Agregar las opciones a ambos selectores
+            selectCategoria.appendChild(option.cloneNode(true));
+            selectCategoriaEliminar.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error al cargar las categorías:", error);
+        }
+      }
+
+      // Llamamos a la función para cargar las categorías al cargar la página
+      cargarCategorias();
+    });
+
+  </script>
+
+
+</body>
+</html>
