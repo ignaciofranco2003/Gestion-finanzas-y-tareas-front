@@ -221,7 +221,7 @@
             }
 
             // Verificar el formato del email
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const emailPattern =  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9]{2,}$/;
             if (!emailPattern.test(email)) {
                 // Swal.fire({
                 //             title: "Por favor ingresa un email válido.",
@@ -284,16 +284,22 @@
                 });
 
                 if (response.ok) {
-                    // Redirigir a la página de inicio de sesión
                     Swal.fire({
-                            title: "Usuario creado exitosamente",
-                            icon: "success",
-                            confirmButtonText: "OK"
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '/';; // Recargar la página si el usuario hace clic en "OK"
-                            }
-                        });
+                        title: "Usuario creado exitosamente",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                        timer: 1500, // La alerta se cerrará automáticamente después de 1.5 segundos
+                        allowOutsideClick: true, // Permite hacer clic fuera para cerrar
+                        allowEscapeKey: true // Permite cerrar con la tecla Esc
+                    }).then(() => {
+                        // Redirige a la página de inicio de sesión, sin importar cómo se cierre la alerta
+                        window.location.href = '/';
+                    });
+
+                    // Agrega una redirección de seguridad en caso de que el usuario no interactúe
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
                 } else {
                     const errorText = await response.text();
                     // Swal.fire({

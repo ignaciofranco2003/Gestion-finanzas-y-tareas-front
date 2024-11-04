@@ -16,7 +16,7 @@
         }
 
         body {
-            background-image: url(imagenes/Fondo-remaster.jpeg);
+            background-image: url("https://drive.google.com/thumbnail?id=1HulCrn-LlhROS6nb-jCkdvubxTRp1QDy&sz=w1000");
             background-size: cover;
             min-height: 100vh;
         }
@@ -139,7 +139,7 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container-fluid">
-            <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>      
+            <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>
             <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
                 <p class="mb-0">Usuario</p>
                 <i class="bi bi-person-circle ms-2"></i>
@@ -150,8 +150,8 @@
     <div class="todo-container container">
         <h1>TAREAS</h1>
         <div class="todo-input">
-            <input type="text" id="taskInput" placeholder="Agregar una nueva tarea">
-            <button id="addTaskBtn">Agregar</button>
+            <input type="text" id="taskInput" placeholder="Agregar una nueva tarea" maxlength="37">
+            <button type="submit" id="addTaskBtn">Agregar</button>
         </div>
         <ul id="taskList"></ul>
     </div>

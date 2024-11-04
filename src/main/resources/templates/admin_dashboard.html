@@ -8,6 +8,8 @@
     <!--imagen bootstrap-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!--bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
@@ -83,10 +85,35 @@
         height: 100%;
         margin-top: 5%;
     }
+
+        /* Estilos del menú desplegable */
+    .dropdown-menu {
+        background-color:#d7e747; /* Color de fondo del menú */
+        border-radius: 0.5rem; /* Bordes redondeados */
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra del menú */
+    }
+
+    .dropdown-item {
+        color: #333; /* Color del texto */
+    }
+
+    .dropdown-item:hover {
+        background-color: #da3131; /* Color de fondo al pasar el mouse */
+        color: #000; /* Color del texto al pasar el mouse */
+    }
+
+    .dropdown-item:focus {
+        background-color: #cbd444; /* Color de fondo al estar en foco */
+        color: #000; /* Color del texto al estar en foco */
+    }
+    .custom-popup {
+        justify-content: center; /* Centra horizontalmente */
+        align-items: center; /* Centra verticalmente */
+    }
     </style>
 
     <!--Navbar-->
-    <body data-bs-theme="light"> <!--modo oscuro-->  
+    <!-- <body data-bs-theme="light">
     <nav class="navbar">
     <div class="container-fluid">
         <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>      
@@ -96,6 +123,31 @@
         </a>
     </div>
     </nav>
+
+
+    <button id="logoutButton">Logout</button> -->
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="container-fluid">
+        <button onclick="cambiarTema()" class="btn rounded-fill">
+            <i id="dl-icon" class="bi bi-moon-fill"></i>
+        </button>
+
+        <!-- Dropdown de Admin con Logout -->
+        <div class="dropdown ms-auto">
+            <a class="navbar-brand d-flex align-items-center agrupacion dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <p class="mb-0">Admin</p>
+                <i class="bi bi-person-circle ms-2"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                <li><button class="dropdown-item" onclick="logout()" id="logoutButton">CERRAR SESION</button></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
 
     <!--main-->
     <div class="container-fluid main">
@@ -112,17 +164,28 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="../PANTALLA DE INICIO/js/temaOscuro.js"></script>
 
-    <button id="logoutButton">Logout</button>
-
     <script>
         document.getElementById("logoutButton").addEventListener("click", function(event) {
             event.preventDefault(); // Evita la redirección inmediata
-    
-            if (confirm("¿Estás seguro de que deseas cerrar la sesión?")) {
-                window.location.href = "/logout"; // Redirige solo si se confirma
-            }
-        });
 
+            // Muestra el SweetAlert en lugar de confirm
+            Swal.fire({
+                title: "¿Deseas cerrar la sesión?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'custom-popup' // Añade una clase personalizada
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/logout"; // Redirige solo si se confirma
+                }
+            });
+        });
         function ingresos(){
             window.location.href = "/home-admin/ingresos";
         }

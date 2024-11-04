@@ -62,23 +62,82 @@
         outline: none;
       }
       .boton-cancelar {
-        background-color: #1BB521;
-        border: none;
-        border-radius: 10px;
-        /* width: 7.5rem; */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        /* font-size: 1.1rem; */
-        margin-top: -1rem;
+        background-color: red;
       }
       .boton-cancelar:hover {
         opacity: 0.8;
       }
-      .eliminar {
-        background-color: #B51B1B;
+
+      .boton-confirmar{
+        background-color: #0baa10;
+      }
+
+      .boton-confirmar:hover {
+        opacity: 0.8;
+      }
+
+      .boton-eliminar-cancelar{
+        background-color: grey;
         color: white;
       }
+
+      .boton-eliminar{
+        background-color: #b43939;
+        color: white;
+      }
+
+      #eliminar {
+        background-color: #b43939;
+        color: white;
+        width: 12rem;
+      }
+
+      #editar{
+        background-color: rgb(186, 194, 77);
+        color: white;
+        width: 12rem;
+      }
+
+      #nueva{
+        background-color: #33c438;
+        color: white;
+        width: 12rem;
+      }
+
+      #eliminar:hover{
+        opacity: 0.8;
+      }
+
+      #editar:hover{
+        opacity: 0.8;
+      }
+
+      #nueva:hover{
+        opacity: 0.8;
+      }
+
+      .boton-volver {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 2.5rem;
+            width: 7rem;
+            border-radius: 5px;
+            background-color: #d3d3d3;
+            color: #333;
+            border: none;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .boton-volver i {
+            margin-right: 5px;
+        }
+
+        .boton-volver:hover {
+            background-color: #d3d3d3;
+            opacity: 0.7;
+        }
+
     </style>
 
     <!-- Navbar -->
@@ -92,21 +151,26 @@
       </div>
     </nav>
 
+    <button onclick="volver()" class="boton-volver mt-4 ms-4" style="background-color: #8EC1E3;">
+      <i class="bi bi-arrow-left-circle"></i> VOLVER
+    </button>
+
     <!-- Main -->
-    <div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 100px);">
+    <div class="d-flex justify-content-center align-items-center " style="margin-top: 7rem;">
       <div class="caja text-center">
         <h2 class="mb-5">INGRESOS</h2>
         <div>
-          <button class="btn mb-4 boton" id="nueva">NUEVA CATEGORIA</button>
+          <button class="btn mb-3 boton" id="nueva">AGREGAR CATEGORIA</button>
         </div>
         <div>
           <button class="btn mb-3 boton" id="editar">EDITAR CATEGORIA</button>
         </div>
         <div>
-          <button class="btn mt-1 boton boton-editable" id="eliminar">ELIMINAR CATEGORIA</button>
+          <button class="btn boton boton-editable" id="eliminar">ELIMINAR CATEGORIA</button>
         </div>       
       </div>
     </div>
+
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -121,71 +185,151 @@
 </html>
 
 <script>
-// document.getElementById('nueva').addEventListener('click', function(event) {
-//     event.preventDefault(); // Evita el comportamiento predeterminado del enlace
-//     Swal.fire({
-//       title: "AGREGAR CATEGORIA",
-//       html: '<input type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs">',
-//       inputPlaceHolder: 'Nombre de la categoria',
-//       showConfirmButton: false,
-//       showCloseButton: true,
-//       showCancelButton: true,
-//       focusConfirm: false,
-//       buttonsStyling : false,
-//       customClass:{
-//         popup: 'fondo',
-//         cancelButton: 'boton-cancelar',
-//       },
-//       cancelButtonText: `<i class="fa fa-times"></i> AGREGAR`,
-//     });
-// });
-document.getElementById('nueva').addEventListener('click', function(event) {
-    event.preventDefault(); // Evita el comportamiento predeterminado del enlace
-    Swal.fire({
-        title: "AGREGAR CATEGORIA",
-        html: '<input id="nombreCategoria" type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs">',
-        showConfirmButton: true,
-        showCancelButton: true,
-        focusConfirm: false,
-        confirmButtonText: 'AGREGAR',
-        cancelButtonText: `<i class="fa fa-times"></i> CANCELAR`,
-        customClass: {
-            popup: 'fondo',
-            confirmButton: 'boton-confirmar',
-            cancelButton: 'boton-cancelar'
-        },
-        preConfirm: () => {
-            const nombre = document.getElementById('nombreCategoria').value;
-            // Aquí se realiza la petición al servidor
-            return fetch('/home-admin/ingresos/crear', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded', // Tipo de contenido
-                },
-                body: new URLSearchParams({ nombre }) // Convertimos el nombre a parámetros de URL
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.statusText); // Lanza un error si la respuesta no es OK
+    function volver(){
+      window.location.href = "/home-admin";
+    }
+
+    document.getElementById('nueva').addEventListener('click', function(event) {
+        event.preventDefault(); // Evita el comportamiento predeterminado del enlace
+        Swal.fire({
+            title: "AGREGAR CATEGORIA",
+            html: '<input id="nombreCategoria" type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs" minlength="4" style="width: 20rem; margin-top:2rem;">',
+            showConfirmButton: true,
+            showCancelButton: true,
+            showCloseButton: true,
+            focusConfirm: false,
+            confirmButtonText: 'AGREGAR',
+            cancelButtonText: `CANCELAR`,
+            customClass: {
+                popup: 'fondo',
+                confirmButton: 'boton-confirmar',
+                cancelButton: 'boton-cancelar'
+            },
+            preConfirm: () => {
+                const nombre = document.getElementById('nombreCategoria').value;
+
+                if (nombre.length < 4 || nombre.length > 20) {
+                    Swal.showValidationMessage("El nombre de la categoría debe tener entre 4 y 20 caracteres");
+                    return;
                 }
-                return response.text(); // Devuelve la respuesta como texto
-            })
-            .catch(error => {
-                Swal.showValidationMessage(`Error: ${error}`); // Muestra un mensaje de error en la alerta
-            });
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Aquí puedes manejar la respuesta de éxito si es necesario
-            Swal.fire('¡Éxito!', result.value, 'success');
-        }
+
+                // Aquí se realiza la petición al servidor
+                return fetch('/home-admin/ingresos/crear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded' // Tipo de contenido
+                    },
+                    body: new URLSearchParams({ nombre }) // Convertimos el nombre a parámetros de URL
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // Maneja diferentes tipos de respuesta de error
+                        if (response.status === 403) {
+                            // Si el nombre de la categoría ya existe
+                            throw new Error("El nombre de la categoría ya existe");
+                        } else {
+                            // Otro tipo de error
+                            throw new Error("Error al crear la categoría: " + response.statusText);
+                        }
+                    }
+                    return response.text(); // Devuelve la respuesta como texto
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Error: ${error.message}`); // Muestra un mensaje de error en la alerta
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Aquí puedes manejar la respuesta de éxito si es necesario
+                Swal.fire('¡Éxito!', result.value, 'success');
+            }
+        });
     });
-});
 
 
 
-document.getElementById('editar').addEventListener('click', function(event) {
-    event.preventDefault(); // Evita el comportamiento predeterminado del enlace
+      document.getElementById('editar').addEventListener('click', function(event) {
+      event.preventDefault(); // Evita el comportamiento predeterminado del enlace
+
+      // Hacer una petición para obtener las categorías
+      fetch('http://localhost:8080/backof/categorias-ingreso/all')
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Error al obtener las categorías');
+              }
+              return response.json(); // Suponiendo que la respuesta es un JSON
+          })
+          .then(data => {
+              // Construir el HTML del select y el input
+              let options = data.map(categoria => `<option value="${categoria.id}">${categoria.nombre}</option>`).join('');
+              let selectHTML = `
+                  <select id="categoriaSelect" class="inputs" style="width: 20rem; margin-bottom: 10px;">
+                      <option value="" disabled selected>SELECCIONE UNA CATEGORIA</option>
+                      ${options}
+                  </select>
+                  <input id="nuevoNombre" type="text" placeholder="NUEVO NOMBRE DE LA CATEGORIA" class="inputs" style="width: 20rem;">
+              `;
+              // Mostrar la alerta de SweetAlert
+              Swal.fire({
+                  title: "EDITAR CATEGORIA",
+                  html: selectHTML,
+                  showConfirmButton: true,
+                  showCloseButton: true,
+                  showCancelButton: true,
+                  focusConfirm: false,
+                  customClass: {
+                      popup: 'fondo',
+                      confirmButton: 'boton-confirmar',
+                      cancelButton: 'boton-cancelar',
+                  },
+                  cancelButtonText: `CANCELAR`,
+                  confirmButtonText: 'EDITAR',
+                  preConfirm: () => {
+                      const categoriaId = document.getElementById('categoriaSelect').value;
+                      const nuevoNombre = document.getElementById('nuevoNombre').value;
+
+                      if (!nuevoNombre) {
+                          Swal.showValidationMessage('Por favor, ingrese un nuevo nombre.'); // Validación de entrada
+                      }
+                      return { categoriaId, nuevoNombre }; // Devolvemos el id de la categoría y el nuevo nombre
+                  }
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      const { categoriaId, nuevoNombre } = result.value;
+
+                      // Enviar la solicitud para editar la categoría al backend
+                      fetch('/home-admin/ingresos/editar', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({ nombre: nuevoNombre, id: categoriaId })
+                      })
+                      .then(response => {
+                          if (response.ok) {
+                              return response.text();
+                          } else if (response.status === 403) {
+                              throw new Error('El nombre de la categoría ya existe');
+                          } else {
+                              throw new Error('Error al editar la categoría');
+                          }
+                      })
+                      .then(message => {
+                          Swal.fire('¡Éxito!', message, 'success');
+                      })
+                      .catch(error => {
+                          Swal.fire('Error', error.message, 'error');
+                      });
+                  }
+              });
+          })
+          .catch(error => {
+              Swal.fire('Error', error.message, 'error'); // Manejo de errores
+          });
+      });
+
+document.getElementById('eliminar').addEventListener('click', function(event) {
+event.preventDefault(); // Evita el comportamiento predeterminado del enlace
 
     // Hacer una petición para obtener las categorías
     fetch('http://localhost:8080/backof/categorias-ingreso/all')
@@ -196,70 +340,71 @@ document.getElementById('editar').addEventListener('click', function(event) {
             return response.json(); // Suponiendo que la respuesta es un JSON
         })
         .then(data => {
-            // Construir el HTML del select y el input
+            // Construir el HTML del select con la opción por defecto
             let options = data.map(categoria => `<option value="${categoria.id}">${categoria.nombre}</option>`).join('');
             let selectHTML = `
-                <select id="categoriaSelect" class="inputs" style="width: 100%; margin-bottom: 10px;">
+                <select id="categoriaEliminar" class="inputs" style="width: 20rem; margin-bottom: 10px;">
+                    <option value="" disabled selected>SELECCIONE UNA CATEGORIA</option>
                     ${options}
                 </select>
-                <input id="nuevoNombre" type="text" placeholder="NUEVO NOMBRE DE LA CATEGORIA" class="inputs" style="width: 100%;">
             `;
 
-            // Mostrar la alerta de SweetAlert
+            // Mostrar la alerta de SweetAlert para eliminar
             Swal.fire({
-                title: "EDITAR CATEGORIA",
+                title: "ELIMINAR CATEGORIA",
                 html: selectHTML,
                 showConfirmButton: true,
                 showCloseButton: true,
                 showCancelButton: true,
                 focusConfirm: false,
-                buttonsStyling: false,
                 customClass: {
                     popup: 'fondo',
-                    cancelButton: 'boton-cancelar',
+                    confirmButton: 'boton-eliminar',
+                    cancelButton: 'boton-eliminar-cancelar',
                 },
-                cancelButtonText: `<i class="fa fa-times"></i> CANCELAR`,
-                confirmButtonText: 'EDITAR',
+                confirmButtonText: 'ELIMINAR',
+                cancelButtonText: 'CANCELAR',
                 preConfirm: () => {
-                    const categoriaId = document.getElementById('categoriaSelect').value;
-                    const nuevoNombre = document.getElementById('nuevoNombre').value;
+                    const categoriaId = document.getElementById('categoriaEliminar').value;
 
-                    if (!nuevoNombre) {
-                        Swal.showValidationMessage('Por favor, ingrese un nuevo nombre.'); // Validación de entrada
+                    if (!categoriaId) {
+                        Swal.showValidationMessage('Por favor, seleccione una categoría para eliminar.');
                     }
-                    return { categoriaId, nuevoNombre }; // Devolvemos el id de la categoría y el nuevo nombre
+                    return categoriaId;
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    const { categoriaId, nuevoNombre } = result.value;
-                    // Aquí puedes hacer lo que necesites con el id de la categoría seleccionada y el nuevo nombre
-                    // Por ejemplo, hacer una solicitud para actualizar la categoría en el backend
-                    Swal.fire('¡Éxito!', `Categoría seleccionada: ${categoriaId}, Nuevo nombre: ${nuevoNombre}`, 'success');
+                    const categoriaId = result.value;
+
+                    // Enviar la solicitud para eliminar la categoría al backend
+                    fetch(`/home-admin/ingresos/eliminar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({id: categoriaId })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        } else if (response.status === 404) {
+                            throw new Error('La categoría no existe');
+                        } else {
+                            throw new Error('Error al eliminar la categoría');
+                        }
+                    })
+                    .then(message => {
+                        Swal.fire('¡Éxito!', message, 'success');
+                    })
+                    .catch(error => {
+                        Swal.fire('Error', error.message, 'error');
+                    });
                 }
             });
         })
         .catch(error => {
             Swal.fire('Error', error.message, 'error'); // Manejo de errores
         });
-});
-
-
-document.getElementById('eliminar').addEventListener('click', function(event) {
-    event.preventDefault(); // Evita el comportamiento predeterminado del enlace
-    Swal.fire({
-        title: "ELIMINAR CATEGORIA",
-        html: '<input type="text" placeholder="SELECCIONE LA CATEGORIA" class="inputs">',
-        showConfirmButton: false,
-        showCloseButton: true,
-        showCancelButton: true,
-        focusConfirm: false,
-        buttonsStyling : false,
-        customClass:{
-          popup: 'fondo',
-          cancelButton: 'boton-cancelar eliminar',
-        },
-        cancelButtonText: `<i class="fa fa-times"></i> ELIMINAR`,
-      });
 });
 
 </script>
