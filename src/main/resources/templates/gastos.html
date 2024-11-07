@@ -169,7 +169,7 @@
             <select class="form-select w-50 mx-auto" id="categoriaEliminar">
               <option value="" disabled selected>Selecciona una categoría para eliminar el monto</option>
             </select>
-            <input type="number" class="form-control w-50 mx-auto mt-2" id="montoEliminar" placeholder="monto a eliminar $999">
+            <input type="number" class="form-control w-50 mx-auto mt-2" id="montoEliminar" placeholder="monto a eliminar $999" min="0" step="0"> 
             <button class="btn btn-danger mt-2" onclick="eliminarGasto()">ELIMINAR</button>
           </div>
         </div>
@@ -185,6 +185,14 @@
   
   <!--JavaScript-->
   <script>
+
+
+      // Evita que se ingresen caracteres especiales en el campo de monto
+      document.getElementById('montoEliminar').addEventListener('input', function(e) {
+      // Reemplaza cualquier símbolo o letra que no sea número o punto decimal
+      e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+      });
+
     const datosGastos = { 'Alquiler': 0, 'Comida': 0, 'Transporte': 0, 'Entretenimiento': 0, 'Otros': 0 };
 
     const ctx = document.getElementById('myChart').getContext('2d');
@@ -230,7 +238,7 @@
       event.preventDefault();
       const categoria = document.getElementById('categoria').value;
       const monto = parseFloat(document.getElementById('monto').value);
-      if (categoria && !isNaN(monto)) {
+      if (categoria && !isNaN(monto) && monto > 0) {
         datosGastos[categoria] += monto;
         actualizarGrafico();
         document.getElementById('gastosForm').reset();
