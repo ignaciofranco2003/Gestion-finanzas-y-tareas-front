@@ -1,22 +1,324 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ahorros</title>
 
-    <!--imagen bootstrap-->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <style>
+        body {
+            background-image: url('https://drive.google.com/uc?export=view&id=ID_DE_LA_IMAGEN');
+            background-size: cover;
+        }
+        .navbar {
+            background-color: #1BB521;
+        }
+        .agrupacion {
+            font-size: 1.3rem;
+        }
+        i {
+            font-size: 2.2rem;
+        }
+        .container {
+            background-color: #8EC1E3;
+            border: none;
+            border-radius: 5px;
+            height: 150px;
+        }
+        .izq {
+            width: 50%;
+            height: 100%;
+        }
+        .contenedor-izq {
+            margin-top: 22%;
+            width: 60%;
+            height: 20rem;
+            padding-top: 20px;
+        }
+        .der {
+            width: 50%;
+            display: flex;
+            justify-content: center; 
+            align-items: center;     
+            height: 100%;
+        }
+        .caja {
+            border-radius: 5px;
+            height: 30rem;
+            width: 80%;
+            text-align: center;
+            margin-top: 5.5rem;
+            background-color: #D9D9D9;
+            position: relative;
+            overflow: hidden;
+        }
+        #listaAhorros {
+            max-height: 20rem;
+            overflow-y: auto; 
+            padding: 0;
+            margin-top: 1rem;
+        }
+        li {
+            font-size: 1.5rem;
+            margin-left: 50px;
+            border-bottom: 1px solid black;
+            width: 80%;
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-add-money {
+            font-size: 1.2rem;
+            color: green;
+            cursor: pointer;
+        }
+        .btn-complete {
+            font-size: 1.2rem;
+            color: #28a745;
+        }
+        .botones{
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+        .boton{
+          margin: 1rem;
+          width: 30%;
+        }
+        .boton:hover{
+          opacity: 0.9;
+        }
+        .boton-nuevo{
+          background-color: #33c438;
+        }
+        .boton-nuevo:hover{
+          background-color: #33c438;
+          font-weight: bold;
+        }
+        .boton-editar{
+          background-color: rgb(186, 194, 77);
+        }
+        .boton-editar:hover{
+          background-color: rgb(186, 194, 77);
+          font-weight: bold;
+        }
+        .boton-eliminar{
+          background-color: #b43939;
+          color: white;
+        }
+        .boton-eliminar:hover{
+          background-color: #b43939;
+          color: white;
+          font-weight: bold;
+        }
+        .casa{
+            color: black;
+            margin-left: 5px;
+        }
+    </style>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <button onclick="volver()" class="btn rounded-fill">
+                <i id="dl-icon" class="bi bi-house-fill"></i>
+            </button>  
+            <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
+                <p class="mb-0">Usuario</p>
+                <i class="bi bi-person-circle ms-2"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="container-fluid main">
+        <div class="row d-flex">
+            <!-- Lado izquierdo -->
+            <div class="izq text-center">
+                <div class="container contenedor-izq">
+                    <h1 class="container-fluid text-center ingreso-titulo mt-2">AHORRO</h1>
+                    <div class="botones">
+                        <button class="btn boton boton-nuevo" onclick="nuevoAhorro()">NUEVO</button>
+                        <button class="btn boton boton-editar" onclick="editarAhorro()">EDITAR</button>
+                        <button class="btn boton boton-eliminar" onclick="eliminarAhorro()">ELIMINAR</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Lado derecho -->
+            <div class="der d-flex">
+                <div class="caja">
+                    <h1 class="mt-4 text-center">TOTAL AHORROS</h1>
+                    <ul class="text-start" id="listaAhorros"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 Library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+
+        function volver(){
+            window.location.href = "/home-usuario";
+        }
+
+
+
+        let ahorros = [];  // Declaración de la variable ahorros
+
+        // Función para actualizar la lista de ahorros
+        function actualizarLista() {
+            const lista = document.getElementById("listaAhorros");
+            lista.innerHTML = "";  // Limpiar la lista antes de actualizar
+
+            ahorros.forEach((ahorro) => {
+                const li = document.createElement("li");
+
+                li.textContent = `${ahorro.nombre}: $${ahorro.montoActual} / $${ahorro.montoMeta}`;
+
+                // Crear el botón de agregar dinero o el ícono de completado
+                const boton = document.createElement("span");
+                if (ahorro.montoActual >= ahorro.montoMeta) {
+                    // Meta alcanzada: mostrar ícono de check
+                    boton.className = "btn-complete bi bi-check-circle-fill";
+                } else {
+                    // Meta no alcanzada: mostrar botón de "+", al que se le puede hacer clic para agregar dinero
+                    boton.className = "btn-add-money bi bi-plus-circle";
+                    boton.onclick = () => agregarDinero(ahorro.nombre); // Agregar función para añadir dinero
+                }
+
+                li.appendChild(boton); // Agregar el botón al elemento de la lista
+                lista.appendChild(li);
+            });
+        }
+
+        // Función para agregar un nuevo ahorro con advertencia de confirmación
+function nuevoAhorro() {
+    Swal.fire({
+        title: 'Nuevo Ahorro',
+        html:
+            '<input id="nombreAhorro" class="swal2-input" placeholder="Nombre del ahorro">' +
+            '<input id="montoMetaAhorro" type="number" class="swal2-input" placeholder="Monto meta">',
+        confirmButtonText: 'Guardar',
+        preConfirm: () => {
+            const nombre = document.getElementById('nombreAhorro').value;
+            const montoMeta = parseFloat(document.getElementById('montoMetaAhorro').value);
+            if (nombre && !isNaN(montoMeta)) {
+                return { nombre, montoMeta };
+            } else {
+                Swal.showValidationMessage('Por favor, ingrese un nombre y monto válido');
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const { nombre, montoMeta } = result.value;
+            
+            // Confirmación final
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: `Ha ingresado un ahorro con nombre: "${nombre}" y monto meta: $${montoMeta}. No podrá modificarlo luego.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, guardar',
+                cancelButtonText: 'No, editar',
+            }).then((confirmResult) => {
+                if (confirmResult.isConfirmed) {
+                    ahorros.push({ nombre, montoActual: 0, montoMeta });
+                    actualizarLista();
+                } else {
+                    // Llamamos de nuevo a `nuevoAhorro` para editar el ahorro en caso de que el usuario elija "No, editar"
+                    nuevoAhorro();
+                }
+            });
+        }
+    });
+}
+
+        // Función para editar el nombre de un ahorro seleccionado desde un menú desplegable
+function editarAhorro() {
+    // Crear el contenido HTML para el select con las opciones de ahorro
+    const opciones = ahorros.map(ahorro => `<option value="${ahorro.nombre}">${ahorro.nombre}</option>`).join('');
     
-    <!--bootstrap-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  </head>
-  <body>
+    Swal.fire({
+        title: 'Selecciona el ahorro a editar',
+        html: `
+            <select id="ahorroSeleccionado" class="swal2-input">
+                ${opciones}
+            </select>
+            <input id="nuevoNombreAhorro" class="swal2-input" placeholder="Nuevo nombre">
+        `,
+        confirmButtonText: 'Guardar',
+        showCancelButton: true,
+        preConfirm: () => {
+            const nombreActual = document.getElementById('ahorroSeleccionado').value;
+            const nuevoNombre = document.getElementById('nuevoNombreAhorro').value;
+            
+            if (nuevoNombre.trim() === "") {
+                Swal.showValidationMessage('Por favor, ingresa un nuevo nombre válido');
+                return false;
+            }
+            
+            const ahorro = ahorros.find(a => a.nombre === nombreActual);
+            if (ahorro) {
+                ahorro.nombre = nuevoNombre; // Actualizar el nombre del ahorro
+                actualizarLista(); // Refrescar la lista de ahorros
+            }
+        }
+    });
+}
 
-    Ahorros
+        // Función para eliminar un ahorro con SweetAlert
+function eliminarAhorro() {
+    Swal.fire({
+        title: 'Eliminar Ahorro',
+        input: 'text',
+        inputPlaceholder: 'Nombre del ahorro a eliminar',
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const nombre = result.value;
+            const ahorroIndex = ahorros.findIndex(a => a.nombre === nombre);
 
-    <!--script de bootstrap-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="js/temaOscuro.js"></script>
-  </body>
+            if (ahorroIndex === -1) {
+                // Si el ahorro no existe, mostrar un mensaje de error
+                Swal.fire('Error', 'El ahorro especificado no existe', 'error');
+            } else {
+                // Si el ahorro existe, eliminarlo y actualizar la lista
+                ahorros.splice(ahorroIndex, 1);
+                actualizarLista();
+            }
+        }
+    });
+}
+
+
+        // Función para agregar dinero a un ahorro específico con SweetAlert
+        function agregarDinero(nombre) {
+            const ahorro = ahorros.find(a => a.nombre === nombre);
+            if (!ahorro || ahorro.montoActual >= ahorro.montoMeta) return;
+
+            Swal.fire({
+                title: 'Agregar Dinero',
+                input: 'number',
+                inputPlaceholder: 'Cantidad a agregar',
+                confirmButtonText: 'Agregar',
+                preConfirm: (cantidad) => {
+                    ahorro.montoActual += parseFloat(cantidad);
+                    if (ahorro.montoActual > ahorro.montoMeta) ahorro.montoActual = ahorro.montoMeta; // Limitar al monto meta
+                    actualizarLista();
+                }
+            });
+        }
+    </script>
+</body>
 </html>
+

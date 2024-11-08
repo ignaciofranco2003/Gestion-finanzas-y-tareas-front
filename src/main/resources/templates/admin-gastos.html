@@ -36,11 +36,9 @@
         width: 400px; /* Ancho fijo para evitar que cambie */
         padding: 5rem;
       }
-      .boton {
-        border: 1px solid black;
-      }
       .boton:hover {
-        background-color: #0002;
+        /*background-color: #0002;*/
+        opacity: 0.9;
       }
       /* Sweet Alert */
       .fondo {
@@ -136,43 +134,54 @@
         opacity: 0.8;
       }
 
-      .boton-volver {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 2.5rem;
-            width: 7rem;
-            border-radius: 5px;
-            background-color: #d3d3d3;
-            color: #333;
-            border: none;
-            transition: background-color 0.3s, opacity 0.3s;
-        }
+      /* Estilos del menú desplegable */
+      .dropdown-menu {
+          background-color:#da3131; /* Color de fondo del menú */
+          border-radius: 0.5rem; /* Bordes redondeados */
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra del menú */
+      }
 
-        .boton-volver i {
-            margin-right: 5px;
-        }
+      .dropdown-item {
+          color: #333; /* Color del texto */
+      }
 
-        .boton-volver:hover {
-            background-color: #d3d3d3;
-            opacity: 0.7;
-        }
+      .dropdown-item:hover {
+          background-color: #da3131; /* Color de fondo al pasar el mouse */
+          color: #000; /* Color del texto al pasar el mouse */
+      }
+
+      .dropdown-item:focus {
+          background-color: #cbd444; /* Color de fondo al estar en foco */
+          color: #000; /* Color del texto al estar en foco */
+      }
+      .custom-popup {
+          justify-content: center; /* Centra horizontalmente */
+          align-items: center; /* Centra verticalmente */
+      }
     </style>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="container-fluid">
-        <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>      
-        <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
-          <p class="mb-0">Admin</p>
-          <i class="bi bi-person-circle ms-2"></i>
-        </a>
-      </div>
-    </nav>
+  <nav class="navbar">
+    <div class="container-fluid">
+        <button onclick="volver()" class="btn rounded-fill">
+            <i id="dl-icon" class="bi bi-house-fill"></i>
+        </button>
 
-    <button onclick="volver()" class="boton-volver mt-4 ms-4" style="background-color: #8EC1E3;">
+        <!-- Dropdown de Admin con Logout -->
+        <div class="dropdown ms-auto">
+            <a class="navbar-brand d-flex align-items-center agrupacion dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <p class="mb-0">Admin</p>
+                <i class="bi bi-person-circle ms-2"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                <li><button class="dropdown-item" onclick="logout()" id="logoutButton">CERRAR SESION</button></li>
+            </ul>
+        </div>
+    </div>
+  </nav>
+
+    <!--<button onclick="volver()" class="boton-volver mt-4 ms-4" style="background-color: #8EC1E3;">
       <i class="bi bi-arrow-left-circle"></i> VOLVER
-    </button>
+    </button>-->
   
     <!-- Main -->
     <div class="d-flex justify-content-center align-items-center" style="margin-top: 7rem;">
@@ -200,6 +209,28 @@
   </body>
 </html>
 <script>
+
+      document.getElementById("logoutButton").addEventListener("click", function(event) {
+                  event.preventDefault(); // Evita la redirección inmediata
+                  // Muestra el SweetAlert en lugar de confirm
+                  Swal.fire({
+                      title: "¿Deseas cerrar la sesión?",
+                      icon: 'warning',
+                      showCancelButton: true,
+                      confirmButtonColor: '#3085d6',
+                      cancelButtonColor: '#d33',
+                      confirmButtonText: 'Sí, cerrar sesión',
+                      cancelButtonText: 'Cancelar',
+                      customClass: {
+                          popup: 'custom-popup' // Añade una clase personalizada
+                      }
+                  }).then((result) => {
+                      if (result.isConfirmed) {
+                          window.location.href = "/logout"; // Redirige solo si se confirma
+                      }
+                  });
+              });
+
     function volver(){
       window.location.href = "/home-admin";
     }

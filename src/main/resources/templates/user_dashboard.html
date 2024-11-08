@@ -10,8 +10,8 @@
     
     <!--bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  </head>
-  <body>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
       .navbar{
         background-color: #1BB521;
@@ -126,75 +126,201 @@
       li:nth-child(5), li:nth-child(6), li:nth-child(7){
         width: 50%;
       } 
-    </style>
 
-    <!--Navbar-->
-    <body data-bs-theme="light"> <!--modo oscuro-->  
+      /* Modo Oscuro */
+      body[data-bs-theme="dark"] {
+        background-color: #121212;
+        color: #fff;
+      }
+      body[data-bs-theme="dark"] .navbar {
+        background-color: #333;
+      }
+      body[data-bs-theme="dark"] .container {
+        background-color: #1e2a47;
+      }
+      body[data-bs-theme="dark"] .caja {
+        background-color: #333;
+        background-image: none;
+      }
+      body[data-bs-theme="dark"] .boton-ingresos,
+      body[data-bs-theme="dark"] .boton-ahorros,
+      body[data-bs-theme="dark"] .boton-gastos {
+        border: 1px solid #fff;
+        background-color: #444;
+      }
+      body[data-bs-theme="dark"] .texto-boton {
+        color: #fff;
+      }
+
+    /* Estilos del menú desplegable */
+    .dropdown-menu {
+        background-color:#da3131; /* Color de fondo del menú */
+        border-radius: 0.5rem; /* Bordes redondeados */
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra del menú */
+    }
+
+    .dropdown-item {
+        color: #333; /* Color del texto */
+    }
+
+    .dropdown-item:hover {
+        background-color: #da3131; /* Color de fondo al pasar el mouse */
+        color: #000; /* Color del texto al pasar el mouse */
+    }
+
+    .dropdown-item:focus {
+        background-color: #cbd444; /* Color de fondo al estar en foco */
+        color: #000; /* Color del texto al estar en foco */
+    }
+    .custom-popup {
+        justify-content: center; /* Centra horizontalmente */
+        align-items: center; /* Centra verticalmente */
+    }
+
+    </style>
+  </head>
+  <body data-bs-theme="light"> <!-- Aquí comienza el modo claro por defecto -->
+
     <nav class="navbar">
       <div class="container-fluid">
-        <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>      
-        <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
-          <p class="mb-0">Usuario</p>
-          <i class="bi bi-person-circle ms-2"></i>
-        </a>
-      </div>
-    </nav>
+        <button onclick="cambiarTema()" class="btn rounded-fill">
+          <i id="dl-icon" class="bi bi-moon-fill"></i>
+        </button>    
+  
+        <div class="dropdown ms-auto">
+          <a class="navbar-brand d-flex align-items-center agrupacion dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <p class="mb-0">Usuario</p>
+              <i class="bi bi-person-circle ms-2"></i>
+          </a>
 
-    <!--main-->
+          <!-- ARREGLAR QUE LOS LI SEAN DE CATEGORIAS DISTINTAS Y NO DAR ESTILOS GRALES -->
+
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+              <li><button class="dropdown-item" onclick="logout()" id="logoutButton">CERRAR SESION</button></li>
+          </ul>
+      </div>
+      </div>
+  </nav>
+
     <div class="container-fluid main">
         <div class="row d-flex">
-          <!-- Lado izquierdo -->
           <div class="izq text-center">
             <button class="boton-ingresos container" onclick="ingresos()"><a class="texto-boton" href="/home-usuario/ingresos">INGRESOS</a></button>
-            <div class="divisores container-fluid text-center" > </div>
+            <div class="divisores container-fluid text-center"></div>
             <button class="boton-ahorros container" onclick="ahorros()"><a class="texto-boton" href="/home-usuario/ahorros">AHORROS</a></button>
-            <div class="divisores container-fluid text-center"> </div>
+            <div class="divisores container-fluid text-center"></div>
             <button class="boton-gastos container" onclick="gastos()"><a class="texto-boton" href="/home-usuario/gastos">GASTOS</a></button>
           </div>
-          <!-- Lado derecho -->
+
           <div class="der d-flex">
             <div class="caja">
               <h1 class="mt-4 text-center">TAREAS</h1>
-              <ul class="text-start">
-                <li class="mt-4">Pasear al perro</li>
-                <li class="mt-4">Pagar las cuentas</li>
-                <li class="mt-4">Comprar la comida</li>
-                <li class="mt-4">Pasear al perro</li>
-                <li class="mt-4">Clases de natacion</li>
-                <li class="mt-4">Ir al medico</li>
-                <li class="mt-4">Turno de padel</li>         
+              <ul id="tareas-list" class="text-start">
+                <!-- Las tareas dinámicas se cargarán aquí -->
               </ul>
-              <button class="btn btn-dark mt-2 boton-mas"><a class="vermas-tolist" href="/home-usuario/tareas">VER TAREAS</a></button>
+              <button class="btn btn-dark mt-2 boton-mas" onclick="homeTareas()">
+                <a class="vermas-tolist" href="/home-usuario/tareas">VER TODO</a>
+              </button>
               <i class="bi bi-clipboard-check tilde"></i>
             </div>
           </div>
+
+
         </div>
       </div>
 
-      <button id="logoutButton">logout</button>
-
       <script>
-          document.getElementById("logoutButton").addEventListener("click", function(event) {
-              event.preventDefault(); // Evita la redirección inmediata
-      
-              if (confirm("¿Estás seguro de que deseas cerrar la sesión?")) {
-                  window.location.href = "/logout"; // Redirige solo si se confirma
-              }
-          });
+        function homeTareas(){
+          window.location.href = "/home-usuario/tareas";
+        }
 
+        document.addEventListener('DOMContentLoaded', async () => {
+          const tareasList = document.getElementById('tareas-list');
 
-          function ingresos(){
+          try {
+            // Realizar la solicitud al endpoint
+            const response = await fetch('/tareas/obtener');
+            const tareas = await response.json();
+
+            if (tareas.length === 0) {
+              tareasList.innerHTML = '<li>No hay tareas disponibles.</li>';
+              return;
+            }
+
+            // Seleccionar tareas aleatorias (máximo 7 o todas si son menos)
+            const randomTareas = tareas.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+            // Crear elementos dinámicos para cada tarea
+            randomTareas.forEach(tarea => {
+              const li = document.createElement('li');
+              li.classList.add('mt-4');
+              li.style.display = 'flex';
+              li.style.justifyContent = 'space-between';
+              li.style.alignItems = 'center';
+
+              // Crear el texto de la tarea
+              const span = document.createElement('span');
+              span.textContent = tarea.descripcion;
+
+              // Crear el ícono correspondiente
+              const icon = document.createElement('i');
+              icon.classList.add('bi');
+              icon.classList.add(tarea.completada ? 'bi-check-circle' : 'bi-hourglass');
+
+              // Agregar el texto de la tarea y el ícono al li
+              li.appendChild(span);
+              li.appendChild(icon);
+
+              // Agregar el li a la lista
+              tareasList.appendChild(li);
+            });
+          } catch (error) {
+            console.error('Error al obtener las tareas:', error);
+            tareasList.innerHTML = '<li>Error al cargar las tareas.</li>';
+          }
+        });
+
+        document.getElementById("logoutButton").addEventListener("click", function(event) {
+            event.preventDefault(); // Evita la redirección inmediata
+            // Muestra el SweetAlert en lugar de confirm
+            Swal.fire({
+                title: "¿Deseas cerrar la sesión?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'custom-popup' // Añade una clase personalizada
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/logout"; // Redirige solo si se confirma
+                }
+            });
+        });
+
+          function ingresos() {
             window.location.href = "/home-usuario/ingresos";
           }
-          function ahorros(){
+          function ahorros() {
             window.location.href = "/home-usuario/ahorros";
           }
-          function gastos(){
+          function gastos() {
             window.location.href = "/home-usuario/gastos";
           }
+
+          function cambiarTema() {
+            let currentTheme = document.body.getAttribute('data-bs-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-bs-theme', newTheme);
+            let icon = document.getElementById("dl-icon");
+            icon.classList.toggle("bi-sun-fill");
+            icon.classList.toggle("bi-moon-fill");
+          }
       </script>
-    <!--script de bootstrap-->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="js/temaOscuro.js"></script>
   </body>
 </html>

@@ -102,7 +102,9 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container-fluid">
-            <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>      
+            <button onclick="volver()" class="btn rounded-fill">
+                <i id="dl-icon" class="bi bi-house-fill"></i>
+            </button>   
             <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
                 <p class="mb-0">Usuario</p>
                 <i class="bi bi-person-circle ms-2"></i>
@@ -158,73 +160,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         
+        function volver(){
+            window.location.href = "/home-usuario";
+        }
+
+
         // Evita que se ingresen caracteres especiales en el campo de monto
         document.getElementById('montoIngreso').addEventListener('input', function(e) {
             // Reemplaza cualquier símbolo o letra que no sea número o punto decimal
             e.target.value = e.target.value.replace(/[^0-9.]/g, '');
         });
-
-        // // Lógica para manejar el envío del formulario
-        // document.getElementById('ingresoForm').addEventListener('submit', async function(event) {
-        //     event.preventDefault(); // Evitar el envío por defecto del formulario
-                
-        //     const monto = parseFloat(document.getElementById('montoIngreso').value);
-        //     const categoriaId = parseInt(document.getElementById('categoriaIngreso').value);
-
-        //     if (!isNaN(monto) && !isNaN(categoriaId)) {
-        //             // Hacer la solicitud al endpoint
-        //             // console.log(categoriaId);
-
-        //         // Muestra el SweetAlert en lugar de confirm
-        //             Swal.fire({
-        //                 title: "¿Deseas agregar el ingreso?",
-        //                 icon: 'warning',
-        //                 showCancelButton: true,
-        //                 confirmButtonColor: '#3085d6',
-        //                 cancelButtonColor: '#d33',
-        //                 confirmButtonText: 'Sí, cerrar sesión',
-        //                 cancelButtonText: 'Cancelar',
-        //                 customClass: {
-        //                     popup: 'custom-popup' // Añade una clase personalizada
-        //                 }
-        //             }).then((result) => {
-        //                 if (result.isConfirmed) {
-        //                     window.location.href = "/logout"; // Redirige solo si se confirma
-        //                 }
-        //             });
-
-        //             const response = await enviarIngreso(monto, categoriaId);
-        //             if (response.ok) {
-        //                     // Usar SweetAlert para mostrar una alerta de confirmación
-        //                     Swal.fire({
-        //                         title: "Ingreso creado exitosamente",
-        //                         icon: "success",
-        //                         confirmButtonText: "OK"
-        //                     }).then((result) => {
-        //                         if (result.isConfirmed) {
-        //                             location.reload(); // Recargar la página si el usuario hace clic en "OK"
-        //                         }
-        //                     });
-        //             } else {
-        //                 alert("Error al crear el ingreso: " + response.statusText);
-        //             }
-        //     } else {
-        //             if (!isNaN(categoriaId)) {
-        //                 Swal.fire({
-        //                         title: "Por favor, ingrese un monto",
-        //                         icon: "warning",
-        //                         confirmButtonText: "OK"
-        //                     })
-        //             }else{
-        //                 Swal.fire({
-        //                         title: "Por favor, ingrese una categoria",
-        //                         icon: "warning",
-        //                         confirmButtonText: "OK"
-        //                     })
-        //             }
-        //         }
-        // });
-
 
                 // Lógica para manejar el envío del formulario
         document.getElementById('ingresoForm').addEventListener('submit', async function(event) {

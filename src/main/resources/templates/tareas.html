@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
@@ -12,21 +15,24 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
         }
 
         body {
             background-image: url("https://drive.google.com/thumbnail?id=1HulCrn-LlhROS6nb-jCkdvubxTRp1QDy&sz=w1000");
-            background-size: cover;
+            background-size: contain;
+            background-attachment: fixed;
             min-height: 100vh;
         }
 
         .navbar {
             background-color: #1BB521;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .agrupacion {
             font-size: 1.3rem;
+            color: black;
         }
 
         i {
@@ -35,67 +41,93 @@
 
         .todo-container {
             background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            width: 500px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 550px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
             text-align: center;
             margin: 50px auto;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .todo-container:hover {
+            transform: scale(1.03);
         }
 
         h1 {
             margin-bottom: 1.5rem;
             color: white;
-            font-size: 35px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
         }
 
         .todo-input {
             display: flex;
-            gap: 5px;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
         #taskInput {
             flex: 1;
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #444;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        #taskInput:focus {
+            background-color: #555;
+            outline: none;
         }
 
         #addTaskBtn {
-            padding: 8px;
-            font-size: 16px;
+            padding: 10px 15px;
+            font-size: 18px;
             border: none;
             background-color: #4CAF50;
             color: white;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         #addTaskBtn:hover {
             background-color: #45a049;
+            transform: scale(1.05);
         }
 
         ul {
             list-style: none;
             padding: 0;
+            max-height: 26rem;
+            overflow-y: auto;
+            padding-right: 15px; /* Ajusta el valor según lo que necesites */
         }
 
         .task-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px;
+            padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            background-color: #fafafa;
-            transition: background-color 0.3s;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background-color: #f4f4f4;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         .task-item:hover {
             background-color: #f1f1f1;
+            transform: translateY(-2px);
+        }
+
+        .task-item.completed {
+            background-color: #d4edda;
+            box-shadow: 0 4px 6px rgba(0, 128, 0, 0.2);
         }
 
         .task-item.completed .task-text {
@@ -105,23 +137,34 @@
 
         .task-text {
             flex: 1;
-            font-size: 16px;
-            padding-right: 10px; /* Espacio antes del botón de editar */
+            font-size: 18px;
+            padding-right: 15px;
+            transition: color 0.3s ease;
         }
 
         button {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
         }
 
         button.edit {
             color: #007BFF;
+            transition: color 0.3s ease;
+        }
+
+        button.edit:hover {
+            color: #0056b3;
         }
 
         button.delete {
             color: #D9534F;
+            transition: color 0.3s ease;
+        }
+
+        button.delete:hover {
+            color: #c9302c;
         }
 
         .edit-input {
@@ -133,13 +176,22 @@
             font-size: 16px;
             margin-right: 10px;
         }
+
+        .edit-input:focus {
+            outline: none;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            margin-right: 15px;
+        }
     </style>
 </head>
-<body data-bs-theme="light">
+<body>
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container-fluid">
-            <button onclick="cambiarTema()" class="btn rounded-fill"><i id="dl-icon" class="bi bi-moon-fill"></i></button>
+            <button class="btn rounded-fill" onclick="volver()" ><i id="dl-icon" class="bi bi-house-fill"></i></button>
             <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
                 <p class="mb-0">Usuario</p>
                 <i class="bi bi-person-circle ms-2"></i>
@@ -147,74 +199,299 @@
         </div>
     </nav>
     
-    <div class="todo-container container">
+    <div class="todo-container container" style="width: 42rem; height: 38rem;">
         <h1>TAREAS</h1>
-        <div class="todo-input">
-            <input type="text" id="taskInput" placeholder="Agregar una nueva tarea" maxlength="37">
-            <button type="submit" id="addTaskBtn">Agregar</button>
-        </div>
+    <form class="todo-input">
+        <input type="text" id="taskInput" placeholder="Agregar una nueva tarea" maxlength="37">
+        <button type="submit" id="addTaskBtn">Agregar</button>
+    </form>
+
         <ul id="taskList"></ul>
     </div>
 
-    <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    
-    <script src="js/temaOscuro.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const taskInput = document.getElementById("taskInput");
-            const addTaskBtn = document.getElementById("addTaskBtn");
-            const taskList = document.getElementById("taskList");
-
-            addTaskBtn.addEventListener("click", () => addTask(taskInput.value));
-
-            function addTask(task) {
-                if (task.trim() === "") return;
-
-                const listItem = document.createElement("li");
-                listItem.classList.add("task-item");
-
-                listItem.innerHTML = `
-                    <input type="checkbox" class="toggle-completed">
-                    <span class="task-text">${task}</span>
-                    <input type="text" class="edit-input" value="${task}" />
-                    <button class="edit">✏️</button>
-                    <button class="delete">🗑️</button>
-                `;
-
-                listItem.querySelector(".toggle-completed").addEventListener("click", () => listItem.classList.toggle("completed"));
-                listItem.querySelector(".edit").addEventListener("click", () => toggleEdit(listItem));
-                listItem.querySelector(".delete").addEventListener("click", () => deleteTask(listItem));
-
-                taskList.appendChild(listItem);
-                taskInput.value = "";
-            }
-
-            function toggleEdit(listItem) {
-                const taskText = listItem.querySelector(".task-text");
-                const editInput = listItem.querySelector(".edit-input");
-                const editButton = listItem.querySelector(".edit");
-
-                if (editInput.style.display === "none" || !editInput.style.display) {
-                    editInput.style.display = "block";
-                    taskText.style.display = "none";
-                    editInput.focus();
-                    editInput.addEventListener("blur", () => {
-                        taskText.textContent = editInput.value;
-                        editInput.style.display = "none";
-                        taskText.style.display = "block";
-                    });
-                } else {
-                    taskText.textContent = editInput.value;
-                    editInput.style.display = "none";
-                    taskText.style.display = "block";
-                }
-            }
-
-            function deleteTask(listItem) {
-                listItem.remove();
-            }
-        });
-    </script>
 </body>
 </html>
+<script>
+
+        function volver(){
+            window.location.href = "/home-usuario";
+        }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const taskInput = document.getElementById("taskInput");
+        const addTaskBtn = document.getElementById("addTaskBtn");
+        const taskList = document.getElementById("taskList");
+
+        // Función para cargar tareas al iniciar
+        function loadTasks() {
+            fetch("/tareas/obtener", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Error al cargar las tareas.");
+                }
+            })
+            .then(tasks => {
+                // Filtrar y mostrar tareas no completadas primero
+                const incompleteTasks = tasks.filter(task => !task.completada);
+                const completedTasks = tasks.filter(task => task.completada);
+
+                // Añadir las tareas incompletas primero
+                incompleteTasks.forEach(task => appendTaskToList(task));
+
+                // Luego añadir las tareas completadas al final
+                completedTasks.forEach(task => appendTaskToList(task));
+            })
+            .catch(error => {
+                Swal.fire("Error", error.message, "error");
+            });
+        }
+
+        function clearTasks() {
+            if (taskList) {
+                taskList.innerHTML = "";
+            } else {
+                console.log("No se encontró el contenedor de tareas.");
+            }
+        }
+
+        function reloadTasks() {
+            clearTasks();   // Primero limpia las tareas existentes
+            loadTasks();    // Luego recarga las tareas
+        }
+
+        function appendTaskToList(task) {
+            const listItem = document.createElement("li");
+            listItem.classList.add("task-item");
+
+            listItem.innerHTML = 
+                `<input type="checkbox" class="toggle-completed" ${task.completada ? "checked disabled" : ""}>
+                <span class="task-text">${task.descripcion}</span>
+                <input type="text" class="edit-input" value="${task.descripcion}" />
+                ${task.completada ? "" : `<button class="edit">✏️</button>`}
+                <button class="delete">🗑️</button>`; // Eliminar siempre disponible
+
+            // Marcar como completada
+            const checkbox = listItem.querySelector(".toggle-completed");
+            if (!task.completada) {
+                checkbox.addEventListener("click", () => {
+                    listItem.classList.add("completed");
+                    checkbox.disabled = true; // Deshabilitar el checkbox para no poder desmarcarlo
+                    updateTaskCompletion(task.id, task.descripcion);
+
+                    // Ocultar el botón de editar una vez completada la tarea
+                    const editButton = listItem.querySelector(".edit");
+                    if (editButton) {
+                        editButton.style.display = "none";
+                    }
+                });
+            }
+
+            // Editar tarea
+            if (!task.completada) {
+                listItem.querySelector(".edit").addEventListener("click", () => toggleEdit(listItem, task.id));
+            }
+
+            // Eliminar tarea
+            listItem.querySelector(".delete").addEventListener("click", () => deleteTask(task.id, listItem));
+
+            if (task.completada) listItem.classList.add("completed");
+
+            taskList.appendChild(listItem);
+            taskInput.value = "";
+        }
+
+        // Función para alternar la edición de la tarea
+        function toggleEdit(listItem, taskId) {
+            const taskText = listItem.querySelector(".task-text");
+            const editInput = listItem.querySelector(".edit-input");
+            const editButton = listItem.querySelector(".edit");
+
+            if (editInput.style.display === "none" || !editInput.style.display) {
+                editInput.style.display = "block"; // Mostrar el input de edición
+                taskText.style.display = "none";  // Ocultar el texto de la tarea
+                editInput.value = taskText.textContent; // Colocar la descripción actual en el input
+                editInput.focus(); // Enfocar el input para que el usuario pueda empezar a editar
+
+                // Cuando el input pierde el foco, se guarda la nueva descripción
+                editInput.addEventListener("blur", () => {
+                    confirmAndUpdateTask(editInput.value, taskId, taskText, editInput);
+                });
+
+                // Detectar cuando el usuario presiona la tecla "Enter" y confirmar la edición
+                editInput.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter") {
+                        event.preventDefault(); // Evitar la acción por defecto de "Enter" (como un salto de línea)
+                        confirmAndUpdateTask(editInput.value, taskId, taskText, editInput); // Confirmar y actualizar
+                    }
+                });
+            } else {
+                // Si el input ya estaba visible y el usuario hace clic nuevamente
+                taskText.textContent = editInput.value;
+                editInput.style.display = "none";
+                taskText.style.display = "block";
+            }
+        }
+
+        // Función para confirmar y actualizar la tarea
+        function confirmAndUpdateTask(updatedDescription, taskId, taskText, editInput) {
+            Swal.fire({
+                title: '¿Seguro que quieres actualizar la tarea?',
+                text: `Dejarás la tarea con la descripción: "${updatedDescription}"`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, actualizar',
+                cancelButtonText: 'No, cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    taskText.textContent = updatedDescription;
+                    updateTask(taskId, updatedDescription);
+                    taskText.style.display = "block"; 
+                    editInput.style.display = "none"; 
+                } else {
+                    editInput.style.display = "none";
+                    taskText.style.display = "block"; 
+                }
+            });
+        }
+
+        function updateTask(taskId, updatedDescription) {
+            fetch("/tareas/cambiarNombre", {
+                method: "POST", 
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: taskId,
+                    descripcion: updatedDescription 
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire("Tarea actualizada", "El nombre de la tarea se ha actualizado correctamente.", "success");
+                } else {
+                    throw new Error("Error al actualizar la tarea.");
+                }
+            })
+            .catch(error => {
+                Swal.fire("Error", error.message, "error");
+            });
+        }
+
+        function deleteTask(taskId, listItem) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción no se puede deshacer.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch("/tareas/eliminar", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ id: taskId })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            taskList.removeChild(listItem);
+                            Swal.fire("Tarea eliminada", "La tarea se ha eliminado correctamente.", "success");
+                        } else {
+                            throw new Error("Error al eliminar la tarea.");
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire("Error", error.message, "error");
+                    });
+                }
+            });
+        }
+
+        function updateTaskCompletion(taskId, taskDescription) {
+            Swal.fire({
+                title: "¿Deseas marcar como completada la tarea?",
+                html: ` <a style="font-weight: 700;">Esta acción no es reversible</a><br/><br/>
+                        Nombre de la tarea: "${taskDescription}"`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, completar",
+                cancelButtonText: "Cancelar"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const tarea = { id: taskId, descripcion: taskDescription, completada: true };
+
+                    fetch(`/tareas/completar`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(tarea)
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire("Tarea completada", "La tarea ha sido completada correctamente.", "success");
+                        } else {
+                            throw new Error("Error al actualizar el estado de la tarea.");
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire("Error", error.message, "error");
+                    });
+                } else {
+                    reloadTasks();
+                }
+            });
+        }
+
+        // Cambiar a usar el evento de submit en lugar de click
+        document.querySelector("form.todo-input").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const descripcion = taskInput.value.trim();
+
+            if (descripcion === "") {
+                Swal.fire("Error", "El nombre de la tarea no puede estar vacío.", "error");
+                return;
+            }
+
+            Swal.fire({
+                title: "Confirmar tarea",
+                html: `¿Estás seguro de agregar la tarea? <br/> <br/> Nombre de la tarea: ${descripcion}`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, agregar",
+                cancelButtonText: "Cancelar"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    const tarea = { descripcion, completada: false };
+
+                    fetch("/tareas/crear", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(tarea)
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Error al agregar la tarea.");
+                        reloadTasks();  // Recargar tareas después de agregar una nueva
+                    })
+                    .catch(error => {
+                        Swal.fire("Error", error.message, "error");
+                    });
+                }
+            });
+        });
+
+        loadTasks();
+    });
+</script>
