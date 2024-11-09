@@ -405,7 +405,7 @@
                     .then(response => {
                         if (response.ok) {
                             taskList.removeChild(listItem);
-                            Swal.fire("Tarea eliminada", "La tarea se ha eliminado correctamente.", "success");
+                            Swal.fire("Tarea eliminada", "","success");
                         } else {
                             throw new Error("Error al eliminar la tarea.");
                         }
@@ -439,7 +439,7 @@
                     })
                     .then(response => {
                         if (response.ok) {
-                            Swal.fire("Tarea completada", "La tarea ha sido completada correctamente.", "success");
+                            Swal.fire("Tarea completada", "","success");
                         } else {
                             throw new Error("Error al actualizar el estado de la tarea.");
                         }
