@@ -367,12 +367,13 @@ function editarAhorro() {
                     })
                 } else {
                     // Si no se edita el monto final, solo actualiza el nombre
+                    const completado = ahorroSeleccionado.montoActual  >= ahorroSeleccionado.montoFinal;
                     const requestBody = {
                         id: ahorroId,
                         nombreAhorro: nuevoValor,  // Solo actualiza el nombre
                         montoActual: ahorroSeleccionado.montoActual, // Monto actual se mantiene igual
                         montoFinal: ahorroSeleccionado.montoFinal, // Monto final no se toca
-                        completado: ahorroSeleccionado.completado // El estado de completado no cambia
+                        completado: completado // El estado de completado no cambia
                     };
 
                     return fetch(`/ahorros/editar`, {
@@ -532,6 +533,7 @@ function editarAhorro() {
                         montoFinal: montoFinal, // Puedes mantener este valor o modificarlo según el contexto
                         completado: completado // Marcar como completado si alcanza el monto final
                     };
+
 
                     // Llamada al servidor para agregar el dinero al ahorro
                     fetch('/ahorros/editar', {
