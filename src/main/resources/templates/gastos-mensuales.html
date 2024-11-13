@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gastos</title>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <style>
+    body {
+        background-image: url("https://drive.google.com/thumbnail?id=17ceyiDOZVRZa9_adA1VeEveRyjr04pR4&sz=w1000");
+        background-size: contain;
+    }
+    .navbar {
+        background-color: #1BB521;
+    }
+    .agrupacion {
+        font-size: 1.3rem;
+    }
+    i {
+        font-size: 2.2rem;
+    }
+    .texto-boton {
+        position: relative;
+        z-index: 1;
+        text-decoration: none;
+        color: black;
+        font-size: 1.5rem;
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+    .container {
+        background-color: #8EC1E3;
+        border: none;
+        border-radius: 5px;
+        height: 150px;
+    }
+
+    .caja {
+        border-radius: 5px;
+        width: 90%;
+        max-width: 70rem;
+        background-color: #D9D9D9;
+        margin: auto;
+        margin-top: 2rem;
+        padding: 2rem;
+    }
+    .caja canvas {
+        width: 55rem !important;
+        max-height: 25rem;
+    }
+    .month-list {
+        margin-top: 2rem;
+        text-align: left;
+    }
+    .month-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+    .month-item button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 5px 15px;
+        cursor: pointer;
+    }
+    .btn-mensuales{
+    background-color: transparent;
+    border: none;
+    padding-top: 0px;
+    border-radius: 100%;
+    }
+
+    .month-scroll-container {
+        max-height: 300px; /* Limitar la altura visible */
+        overflow-y: auto;  /* Habilitar el scroll vertical */
+        margin-top: 10px;
+        margin-left: 10px; /* Márgenes a la izquierda */
+        margin-right: 30px; /* Márgenes a la derecha */
+    }
+    /* Asegurarse de que los meses dentro del contenedor tengan un espacio adecuado */
+    .month-item {
+        padding: 5px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    </style> 
+
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <button onclick="home()" class="btn rounded-fill">
+                <i id="dl-icon" class="bi bi-house-fill"></i>
+            </button>     
+            <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
+                <p class="mb-0">Usuario</p>
+                <i class="bi bi-person-circle ms-2"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="container-fluid main" style="margin-bottom: 5rem;">
+        <div class="row d-flex justify-content-center">
+            <div class="caja">
+                <h2 class="text-center"><button class="btn-mensuales mt-2" onclick="volver()"><i class="bi bi-arrow-left-circle"></i></button>Gastos anuales </h2>
+                <canvas id="myChart" class="ms-5"></canvas>
+                <div class="month-list mt-4">
+                    <!-- Lista de meses se agregará dinámicamente aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap, Chart.js y SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function volver() {
+            window.location.href = "/home-usuario/gastos";
+        }
+        function home() {
+            window.location.href = "/home-usuario";
+        }
+    
+        let gastosMensuales = {};
+        let categoriasGasto = {};
+    
+        // Obtener las categorías de gasto desde el servidor y guardarlas en un objeto
+        async function obtenerCategorias() {
+            try {
+                const response = await fetch('http://localhost:8080/backof/categorias-gasto/all');
+                const categorias = await response.json();
+    
+                // Crear un mapa de categorías con sus ids y nombres
+                categorias.forEach(categoria => {
+                    categoriasGasto[categoria.id] = categoria.nombre;
+                });
+            } catch (error) {
+                console.error('Error al obtener las categorías:', error);
+            }
+        }
+    
+        // Obtener y procesar los datos de gastos
+        async function obtenerGastos() {
+            try {
+                const response = await fetch('/gastos/obtener');
+                const gastos = await response.json();
+    
+                // Reinicializar la variable de gastos mensuales
+                gastosMensuales = {};
+    
+                // Procesar cada gasto y agruparlos por mes y categoría
+                gastos.forEach(gasto => {
+                    const fecha = new Date(gasto.fecha);
+                    const mes = fecha.toLocaleString('es-ES', { month: 'long', year: 'numeric' }); // Nombre del mes + año
+    
+                    // Crear el mes en gastosMensuales si no existe
+                    if (!gastosMensuales[mes]) {
+                        gastosMensuales[mes] = { total: 0, categorias: {} };
+                    }
+    
+                    // Obtener el nombre de la categoría usando el id del gasto
+                    const categoriaNombre = categoriasGasto[gasto.categoriaId] || 'Categoría Desconocida';
+    
+                    // Agregar el monto a la categoría en el mes correspondiente
+                    if (!gastosMensuales[mes].categorias[categoriaNombre]) {
+                        gastosMensuales[mes].categorias[categoriaNombre] = 0;
+                    }
+                    gastosMensuales[mes].categorias[categoriaNombre] += gasto.monto;
+    
+                    // Sumar al total del mes
+                    gastosMensuales[mes].total += gasto.monto;
+                });
+    
+                // Ordenar las etiquetas de meses cronológicamente usando las fechas en formato "MM-YYYY"
+                const labels = Object.keys(gastosMensuales).sort((a, b) => {
+                    const [mesA, yearA] = a.split(' ');
+                    const [mesB, yearB] = b.split(' ');
+    
+                    // Convertir mes y año a un objeto Date para comparar cronológicamente
+                    const dateA = new Date(`${yearA}-${monthToNumber(mesA)}-01`);
+                    const dateB = new Date(`${yearB}-${monthToNumber(mesB)}-01`);
+    
+                    return dateA - dateB;
+                });
+    
+                // Configurar datos y gráfico
+                const data = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Gastado',
+                        data: labels.map(month => gastosMensuales[month].total),
+                        backgroundColor: '#28a745',
+                    }]
+                };
+    
+                const config = {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Mes',
+                                    font: { size: 14 }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Monto ($)' }
+                            }
+                        }
+                    }
+                };
+    
+                const myChart = new Chart(document.getElementById('myChart'), config);
+    
+                // Crear lista auxiliar de meses
+                const monthListAux = [];
+                labels.forEach((mes, index) => {
+                    const monthDiv = document.createElement('div');
+                    monthDiv.classList.add('month-item');
+                    monthDiv.innerHTML = `<span><strong>${mes}</strong>: $${gastosMensuales[mes].total.toFixed(2)}</span>
+                        <button onclick="mostrarDetalles('${mes}')">Ver más</button>`;
+                    
+                    // Añadir el mes a la lista auxiliar
+                    monthListAux.push({ mes, monthDiv });
+                });
+    
+                // Ordenar la lista auxiliar de meses cronológicamente
+                monthListAux.sort((a, b) => {
+                    const [mesA, yearA] = a.mes.split(' ');
+                    const [mesB, yearB] = b.mes.split(' ');
+    
+                    const dateA = new Date(`${yearA}-${monthToNumber(mesA)}-01`);
+                    const dateB = new Date(`${yearB}-${monthToNumber(mesB)}-01`);
+    
+                    return dateA - dateB;
+                });
+    
+                // Ahora mostrar los meses en la página
+                const monthListDiv = document.querySelector('.month-list');
+                const scrollContainer = document.createElement('div');
+                scrollContainer.classList.add('month-scroll-container');
+                monthListDiv.appendChild(scrollContainer);
+    
+                // Añadir los meses ya ordenados al contenedor de la lista
+                monthListAux.forEach(({ monthDiv }, index) => {
+                    scrollContainer.appendChild(monthDiv);
+                });
+    
+            } catch (error) {
+                console.error('Error al obtener los datos:', error);
+            }
+        }
+    
+        // Función para convertir nombre de mes a número (ej. "Enero" => 01)
+        function monthToNumber(month) {
+            const meses = {
+                "enero": 1,
+                "febrero": 2,
+                "marzo": 3,
+                "abril": 4,
+                "mayo": 5,
+                "junio": 6,
+                "julio": 7,
+                "agosto": 8,
+                "septiembre": 9,
+                "octubre": 10,
+                "noviembre": 11,
+                "diciembre": 12
+            };
+            return meses[month.toLowerCase()] || 0;
+        }
+    
+        // Mostrar detalles de los gastos por categoría en el popup
+        function mostrarDetalles(mes) {
+            if (gastosMensuales[mes]) {
+                const detalles = Object.entries(gastosMensuales[mes].categorias)
+                    .map(([categoria, monto]) => `<p><strong>${categoria}:</strong> $${monto.toFixed(2)}</p>`)
+                    .join('');
+    
+                Swal.fire({
+                    title: `Gastos en ${mes}`,
+                    html: `<div class="swal-popup-scroll">${detalles}</div>`,
+                    icon: 'info',
+                    width: 600,
+                    customClass: 'swal-popup-scroll'
+                });
+            } else {
+                console.error('Mes no encontrado en gastosMensuales');
+            }
+        }
+    
+        // Inicializar: obtener categorías y luego gastos
+        async function inicializar() {
+            await obtenerCategorias();
+            await obtenerGastos();
+        }
+    
+        inicializar();
+    </script>
+
+</body>
+</html>

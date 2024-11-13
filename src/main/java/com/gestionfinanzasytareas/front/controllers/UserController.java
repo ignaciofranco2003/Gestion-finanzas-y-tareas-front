@@ -77,5 +77,18 @@ public class UserController {
             }
         }
 
+        @GetMapping("/gastos-mensuales")
+        public String gastosAnuales(Model model) {
+            UserSessionManager sessionManager = UserSessionManager.getInstance();
+            
+            // Verifica si la sesión actual es válida para el rol "USER"
+            if (sessionManager.isActiveSession() && "USER".equals(sessionManager.getActiveUserRole())) {
+                return "gastos-mensuales.html";
+            } else {
+                model.addAttribute("error", "No tienes permiso para acceder a esta página o ya hay una sesión activa con otro rol.");
+                return "login";
+            }
+        }
+
 
 }
