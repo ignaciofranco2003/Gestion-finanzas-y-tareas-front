@@ -116,15 +116,14 @@
         color: white;
         text-decoration: none;
       }
-      .tilde{
-        position: absolute;
+      /* .tilde{
         right: 10%;
-        bottom: 14%;
+        bottom: 20%;
         font-size: 8rem;
       }
       li:nth-child(5), li:nth-child(6), li:nth-child(7){
-        width: 50%;
-      } 
+        width: 20rem;
+      }  */
 
       /* Modo Oscuro */
       body[data-bs-theme="dark"] {
@@ -151,30 +150,30 @@
         color: #fff;
       }
 
-    /* Estilos del menú desplegable */
-    .dropdown-menu {
-        background-color:#da3131; /* Color de fondo del menú */
-        border-radius: 0.5rem; /* Bordes redondeados */
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra del menú */
-    }
+      /* Estilos del menú desplegable */
+      .dropdown-menu {
+          background-color:#da3131; /* Color de fondo del menú */
+          border-radius: 0.5rem; /* Bordes redondeados */
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra del menú */
+      }
 
-    .dropdown-item {
-        color: #333; /* Color del texto */
-    }
+      .dropdown-item {
+          color: #333; /* Color del texto */
+      }
 
-    .dropdown-item:hover {
-        background-color: #da3131; /* Color de fondo al pasar el mouse */
-        color: #000; /* Color del texto al pasar el mouse */
-    }
+      .dropdown-item:hover {
+          background-color: #da3131; /* Color de fondo al pasar el mouse */
+          color: #000; /* Color del texto al pasar el mouse */
+      }
 
-    .dropdown-item:focus {
-        background-color: #cbd444; /* Color de fondo al estar en foco */
-        color: #000; /* Color del texto al estar en foco */
-    }
-    .custom-popup {
-        justify-content: center; /* Centra horizontalmente */
-        align-items: center; /* Centra verticalmente */
-    }
+      .dropdown-item:focus {
+          background-color: #cbd444; /* Color de fondo al estar en foco */
+          color: #000; /* Color del texto al estar en foco */
+      }
+      .custom-popup {
+          justify-content: center; /* Centra horizontalmente */
+          align-items: center; /* Centra verticalmente */
+      }
 
     </style>
   </head>
@@ -187,15 +186,15 @@
         </button>    
   
         <div class="dropdown ms-auto">
-          <a class="navbar-brand d-flex align-items-center agrupacion dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <p class="mb-0">Usuario</p>
-              <i class="bi bi-person-circle ms-2"></i>
-          </a>
+            <a class="navbar-brand d-flex align-items-center agrupacion dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <p class="mb-0">Usuario</p>
+                <i class="bi bi-person-circle ms-2"></i>
+            </a>
 
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
-              <button class="dropdown-item" onclick="logout()" id="logoutButton">CERRAR SESION</button>
-          </ul>
-      </div>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                <button class="dropdown-item" onclick="logout()" id="logoutButton">CERRAR SESION</button>
+            </ul>
+        </div>
       </div>
   </nav>
 
@@ -218,109 +217,107 @@
               <button class="btn btn-dark mt-2 boton-mas" onclick="homeTareas()">
                 <a class="vermas-tolist" href="/home-usuario/tareas">VER TODO</a>
               </button>
-              <i class="bi bi-clipboard-check tilde"></i>
+
+              <!-- <i class="bi bi-clipboard-check tilde"></i> -->
             </div>
+
           </div>
 
 
         </div>
       </div>
 
-      <script>
-        function homeTareas(){
-          window.location.href = "/home-usuario/tareas";
+  <script>
+      function homeTareas(){
+        window.location.href = "/home-usuario/tareas";
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        const tareasList = document.getElementById('tareas-list');
+
+        try {
+          // Realizar la solicitud al endpoint
+          const response = await fetch('/tareas/obtener');
+          const tareas = await response.json();
+
+          if (tareas.length === 0) {
+            tareasList.innerHTML = '<li>No hay tareas disponibles.</li>';
+            return;
+          }
+
+          // Seleccionar tareas aleatorias (máximo 7 o todas si son menos)
+          const randomTareas = tareas.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+          // Crear elementos dinámicos para cada tarea
+          randomTareas.forEach(tarea => {
+            const li = document.createElement('li');
+            li.classList.add('mt-4');
+            li.style.display = 'flex';
+            li.style.justifyContent = 'space-between';
+            li.style.alignItems = 'center';
+
+            // Crear el texto de la tarea
+            const span = document.createElement('span');
+            span.textContent = tarea.descripcion;
+
+            // Crear el ícono correspondiente
+            const icon = document.createElement('i');
+            icon.classList.add('bi');
+            icon.classList.add(tarea.completada ? 'bi-check-circle' : 'bi-hourglass');
+
+            // Agregar el texto de la tarea y el ícono al li
+            li.appendChild(span);
+            li.appendChild(icon);
+
+            // Agregar el li a la lista
+            tareasList.appendChild(li);
+          });
+        } catch (error) {
+          console.error('Error al obtener las tareas:', error);
+          tareasList.innerHTML = '<li>Error al cargar las tareas.</li>';
+        }
+      });
+
+      document.getElementById("logoutButton").addEventListener("click", function(event) {
+          event.preventDefault(); // Evita la redirección inmediata
+          // Muestra el SweetAlert en lugar de confirm
+          Swal.fire({
+              title: "¿Deseas cerrar la sesión?",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Sí, cerrar sesión',
+              cancelButtonText: 'Cancelar',
+              customClass: {
+                  popup: 'custom-popup' // Añade una clase personalizada
+              }
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  window.location.href = "/logout"; // Redirige solo si se confirma
+              }
+          });
+      });
+
+        function ingresos() {
+          window.location.href = "/home-usuario/ingresos";
+        }
+        function ahorros() {
+          window.location.href = "/home-usuario/ahorros";
+        }
+        function gastos() {
+          window.location.href = "/home-usuario/gastos";
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-          const tareasList = document.getElementById('tareas-list');
-
-          try {
-            // Realizar la solicitud al endpoint
-            const response = await fetch('/tareas/obtener');
-            const tareas = await response.json();
-
-            if (tareas.length === 0) {
-              tareasList.innerHTML = '<li>No hay tareas disponibles.</li>';
-              return;
-            }
-
-            // Seleccionar tareas aleatorias (máximo 7 o todas si son menos)
-            const randomTareas = tareas.sort(() => 0.5 - Math.random()).slice(0, 5);
-
-            // Crear elementos dinámicos para cada tarea
-            randomTareas.forEach(tarea => {
-              const li = document.createElement('li');
-              li.classList.add('mt-4');
-              li.style.display = 'flex';
-              li.style.justifyContent = 'space-between';
-              li.style.alignItems = 'center';
-
-              // Crear el texto de la tarea
-              const span = document.createElement('span');
-              span.textContent = tarea.descripcion;
-
-              // Crear el ícono correspondiente
-              const icon = document.createElement('i');
-              icon.classList.add('bi');
-              icon.classList.add(tarea.completada ? 'bi-check-circle' : 'bi-hourglass');
-
-              // Agregar el texto de la tarea y el ícono al li
-              li.appendChild(span);
-              li.appendChild(icon);
-
-              // Agregar el li a la lista
-              tareasList.appendChild(li);
-            });
-          } catch (error) {
-            console.error('Error al obtener las tareas:', error);
-            tareasList.innerHTML = '<li>Error al cargar las tareas.</li>';
-          }
-        });
-
-        function logout(){
-          
+        function cambiarTema() {
+          let currentTheme = document.body.getAttribute('data-bs-theme');
+          let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          document.body.setAttribute('data-bs-theme', newTheme);
+          let icon = document.getElementById("dl-icon");
+          icon.classList.toggle("bi-sun-fill");
+          icon.classList.toggle("bi-moon-fill");
         }
-
-        document.getElementById("logoutButton").addEventListener("click", function(event) {
-            event.preventDefault(); // Evita la redirección inmediata
-            // Muestra el SweetAlert en lugar de confirm
-            Swal.fire({
-                title: "¿Deseas cerrar la sesión?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, cerrar sesión',
-                cancelButtonText: 'Cancelar',
-                customClass: {
-                    popup: 'custom-popup' // Añade una clase personalizada
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "/logout"; // Redirige solo si se confirma
-                }
-            });
-        });
-
-          function ingresos() {
-            window.location.href = "/home-usuario/ingresos";
-          }
-          function ahorros() {
-            window.location.href = "/home-usuario/ahorros";
-          }
-          function gastos() {
-            window.location.href = "/home-usuario/gastos";
-          }
-
-          function cambiarTema() {
-            let currentTheme = document.body.getAttribute('data-bs-theme');
-            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-bs-theme', newTheme);
-            let icon = document.getElementById("dl-icon");
-            icon.classList.toggle("bi-sun-fill");
-            icon.classList.toggle("bi-moon-fill");
-          }
-      </script>
+  </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>

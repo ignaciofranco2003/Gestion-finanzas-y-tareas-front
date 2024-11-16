@@ -185,6 +185,31 @@
             transform: scale(1.5);
             margin-right: 15px;
         }
+
+        /* Estilos del menú desplegable */
+        .dropdown-menu {
+            background-color:#da3131; /* Color de fondo del menú */
+            border-radius: 0.5rem; /* Bordes redondeados */
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra del menú */
+        }
+
+        .dropdown-item {
+            color: #333; /* Color del texto */
+        }
+
+        .dropdown-item:hover {
+            background-color: #da3131; /* Color de fondo al pasar el mouse */
+            color: #000; /* Color del texto al pasar el mouse */
+        }
+
+        .dropdown-item:focus {
+            background-color: #cbd444; /* Color de fondo al estar en foco */
+            color: #000; /* Color del texto al estar en foco */
+        }
+        .custom-popup {
+            justify-content: center; /* Centra horizontalmente */
+            align-items: center; /* Centra verticalmente */
+        }
     </style>
 </head>
 <body>
@@ -192,10 +217,16 @@
     <nav class="navbar">
         <div class="container-fluid">
             <button class="btn rounded-fill" onclick="volver()" ><i id="dl-icon" class="bi bi-house-fill"></i></button>
-            <a class="navbar-brand d-flex align-items-center agrupacion" href="#">
-                <p class="mb-0">Usuario</p>
-                <i class="bi bi-person-circle ms-2"></i>
-            </a>
+            <div class="dropdown ms-auto">
+                <a class="navbar-brand d-flex align-items-center agrupacion dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <p class="mb-0">Usuario</p>
+                    <i class="bi bi-person-circle ms-2"></i>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                    <button class="dropdown-item" onclick="logout()" id="logoutButton">CERRAR SESION</button>
+                </ul>
+            </div>
         </div>
     </nav>
     
@@ -211,287 +242,311 @@
 
 </body>
 </html>
-<script>
-
-        function volver(){
-            window.location.href = "/home-usuario";
-        }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const taskInput = document.getElementById("taskInput");
-        const addTaskBtn = document.getElementById("addTaskBtn");
-        const taskList = document.getElementById("taskList");
-
-        // Función para cargar tareas al iniciar
-        function loadTasks() {
-            fetch("/tareas/obtener", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("Error al cargar las tareas.");
-                }
-            })
-            .then(tasks => {
-                // Filtrar y mostrar tareas no completadas primero
-                const incompleteTasks = tasks.filter(task => !task.completada);
-                const completedTasks = tasks.filter(task => task.completada);
-
-                // Añadir las tareas incompletas primero
-                incompleteTasks.forEach(task => appendTaskToList(task));
-
-                // Luego añadir las tareas completadas al final
-                completedTasks.forEach(task => appendTaskToList(task));
-            })
-            .catch(error => {
-                Swal.fire("Error", error.message, "error");
+    <script>
+            document.getElementById("logoutButton").addEventListener("click", function(event) {
+                    event.preventDefault(); // Evita la redirección inmediata
+                    // Muestra el SweetAlert en lugar de confirm
+                    Swal.fire({
+                        title: "¿Deseas cerrar la sesión?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, cerrar sesión',
+                        cancelButtonText: 'Cancelar',
+                        customClass: {
+                            popup: 'custom-popup' // Añade una clase personalizada
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "/logout"; // Redirige solo si se confirma
+                        }
+                    });
             });
-        }
 
-        function clearTasks() {
-            if (taskList) {
-                taskList.innerHTML = "";
-            } else {
-                console.log("No se encontró el contenedor de tareas.");
-            }
-        }
-
-        function reloadTasks() {
-            clearTasks();   // Primero limpia las tareas existentes
-            loadTasks();    // Luego recarga las tareas
-        }
-
-        function appendTaskToList(task) {
-            const listItem = document.createElement("li");
-            listItem.classList.add("task-item");
-
-            listItem.innerHTML = 
-                `<input type="checkbox" class="toggle-completed" ${task.completada ? "checked disabled" : ""}>
-                <span class="task-text">${task.descripcion}</span>
-                <input type="text" class="edit-input" value="${task.descripcion}" />
-                ${task.completada ? "" : `<button class="edit">✏️</button>`}
-                <button class="delete">🗑️</button>`; // Eliminar siempre disponible
-
-            // Marcar como completada
-            const checkbox = listItem.querySelector(".toggle-completed");
-            if (!task.completada) {
-                checkbox.addEventListener("click", () => {
-                    listItem.classList.add("completed");
-                    checkbox.disabled = true; // Deshabilitar el checkbox para no poder desmarcarlo
-                    updateTaskCompletion(task.id, task.descripcion);
-
-                    // Ocultar el botón de editar una vez completada la tarea
-                    const editButton = listItem.querySelector(".edit");
-                    if (editButton) {
-                        editButton.style.display = "none";
-                    }
-                });
+            function volver(){
+                window.location.href = "/home-usuario";
             }
 
-            // Editar tarea
-            if (!task.completada) {
-                listItem.querySelector(".edit").addEventListener("click", () => toggleEdit(listItem, task.id));
+            document.addEventListener("DOMContentLoaded", () => {
+                const taskInput = document.getElementById("taskInput");
+                const addTaskBtn = document.getElementById("addTaskBtn");
+                const taskList = document.getElementById("taskList");
+
+                // Función para cargar tareas al iniciar
+                function loadTasks() {
+                    fetch("/tareas/obtener", {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error("Error al cargar las tareas.");
+                        }
+                    })
+                    .then(tasks => {
+                        // Filtrar y mostrar tareas no completadas primero
+                        const incompleteTasks = tasks.filter(task => !task.completada);
+                        const completedTasks = tasks.filter(task => task.completada);
+
+                        // Añadir las tareas incompletas primero
+                        incompleteTasks.forEach(task => appendTaskToList(task));
+
+                        // Luego añadir las tareas completadas al final
+                        completedTasks.forEach(task => appendTaskToList(task));
+                    })
+                    .catch(error => {
+                        Swal.fire("Error", error.message, "error");
+                    });
             }
 
-            // Eliminar tarea
-            listItem.querySelector(".delete").addEventListener("click", () => deleteTask(task.id, listItem));
-
-            if (task.completada) listItem.classList.add("completed");
-
-            taskList.appendChild(listItem);
-            taskInput.value = "";
-        }
-
-        // Función para alternar la edición de la tarea
-        function toggleEdit(listItem, taskId) {
-            const taskText = listItem.querySelector(".task-text");
-            const editInput = listItem.querySelector(".edit-input");
-            const editButton = listItem.querySelector(".edit");
-
-            if (editInput.style.display === "none" || !editInput.style.display) {
-                editInput.style.display = "block"; // Mostrar el input de edición
-                taskText.style.display = "none";  // Ocultar el texto de la tarea
-                editInput.value = taskText.textContent; // Colocar la descripción actual en el input
-                editInput.focus(); // Enfocar el input para que el usuario pueda empezar a editar
-
-                // Cuando el input pierde el foco, se guarda la nueva descripción
-                editInput.addEventListener("blur", () => {
-                    confirmAndUpdateTask(editInput.value, taskId, taskText, editInput);
-                });
-
-                // Detectar cuando el usuario presiona la tecla "Enter" y confirmar la edición
-                editInput.addEventListener("keydown", (event) => {
-                    if (event.key === "Enter") {
-                        event.preventDefault(); // Evitar la acción por defecto de "Enter" (como un salto de línea)
-                        confirmAndUpdateTask(editInput.value, taskId, taskText, editInput); // Confirmar y actualizar
-                    }
-                });
-            } else {
-                // Si el input ya estaba visible y el usuario hace clic nuevamente
-                taskText.textContent = editInput.value;
-                editInput.style.display = "none";
-                taskText.style.display = "block";
-            }
-        }
-
-        // Función para confirmar y actualizar la tarea
-        function confirmAndUpdateTask(updatedDescription, taskId, taskText, editInput) {
-            Swal.fire({
-                title: '¿Seguro que quieres actualizar la tarea?',
-                text: `Dejarás la tarea con la descripción: "${updatedDescription}"`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, actualizar',
-                cancelButtonText: 'No, cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    taskText.textContent = updatedDescription;
-                    updateTask(taskId, updatedDescription);
-                    taskText.style.display = "block"; 
-                    editInput.style.display = "none"; 
+            function clearTasks() {
+                if (taskList) {
+                    taskList.innerHTML = "";
                 } else {
+                    console.log("No se encontró el contenedor de tareas.");
+                }
+            }
+
+            function reloadTasks() {
+                clearTasks();   // Primero limpia las tareas existentes
+                loadTasks();    // Luego recarga las tareas
+            }
+
+            function appendTaskToList(task) {
+                const listItem = document.createElement("li");
+                listItem.classList.add("task-item");
+
+                listItem.innerHTML = 
+                    `<input type="checkbox" class="toggle-completed" ${task.completada ? "checked disabled" : ""}>
+                    <span class="task-text">${task.descripcion}</span>
+                    <input type="text" class="edit-input" value="${task.descripcion}" />
+                    ${task.completada ? "" : `<button class="edit">✏️</button>`}
+                    <button class="delete">🗑️</button>`; // Eliminar siempre disponible
+
+                // Marcar como completada
+                const checkbox = listItem.querySelector(".toggle-completed");
+                if (!task.completada) {
+                    checkbox.addEventListener("click", () => {
+                        listItem.classList.add("completed");
+                        checkbox.disabled = true; // Deshabilitar el checkbox para no poder desmarcarlo
+                        updateTaskCompletion(task.id, task.descripcion);
+
+                        // Ocultar el botón de editar una vez completada la tarea
+                        const editButton = listItem.querySelector(".edit");
+                        if (editButton) {
+                            editButton.style.display = "none";
+                        }
+                    });
+                }
+
+                // Editar tarea
+                if (!task.completada) {
+                    listItem.querySelector(".edit").addEventListener("click", () => toggleEdit(listItem, task.id));
+                }
+
+                // Eliminar tarea
+                listItem.querySelector(".delete").addEventListener("click", () => deleteTask(task.id, listItem));
+
+                if (task.completada) listItem.classList.add("completed");
+
+                taskList.appendChild(listItem);
+                taskInput.value = "";
+            }
+
+            // Función para alternar la edición de la tarea
+            function toggleEdit(listItem, taskId) {
+                const taskText = listItem.querySelector(".task-text");
+                const editInput = listItem.querySelector(".edit-input");
+                const editButton = listItem.querySelector(".edit");
+
+                if (editInput.style.display === "none" || !editInput.style.display) {
+                    editInput.style.display = "block"; // Mostrar el input de edición
+                    taskText.style.display = "none";  // Ocultar el texto de la tarea
+                    editInput.value = taskText.textContent; // Colocar la descripción actual en el input
+                    editInput.focus(); // Enfocar el input para que el usuario pueda empezar a editar
+
+                    // Cuando el input pierde el foco, se guarda la nueva descripción
+                    editInput.addEventListener("blur", () => {
+                        confirmAndUpdateTask(editInput.value, taskId, taskText, editInput);
+                    });
+
+                    // Detectar cuando el usuario presiona la tecla "Enter" y confirmar la edición
+                    editInput.addEventListener("keydown", (event) => {
+                        if (event.key === "Enter") {
+                            event.preventDefault(); // Evitar la acción por defecto de "Enter" (como un salto de línea)
+                            confirmAndUpdateTask(editInput.value, taskId, taskText, editInput); // Confirmar y actualizar
+                        }
+                    });
+                } else {
+                    // Si el input ya estaba visible y el usuario hace clic nuevamente
+                    taskText.textContent = editInput.value;
                     editInput.style.display = "none";
-                    taskText.style.display = "block"; 
+                    taskText.style.display = "block";
                 }
-            });
-        }
-
-        function updateTask(taskId, updatedDescription) {
-            fetch("/tareas/cambiarNombre", {
-                method: "POST", 
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    id: taskId,
-                    descripcion: updatedDescription 
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    Swal.fire("Tarea actualizada", "El nombre de la tarea se ha actualizado correctamente.", "success");
-                } else {
-                    throw new Error("Error al actualizar la tarea.");
-                }
-            })
-            .catch(error => {
-                Swal.fire("Error", error.message, "error");
-            });
-        }
-
-        function deleteTask(taskId, listItem) {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción no se puede deshacer.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch("/tareas/eliminar", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ id: taskId })
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            taskList.removeChild(listItem);
-                            Swal.fire("Tarea eliminada", "","success");
-                        } else {
-                            throw new Error("Error al eliminar la tarea.");
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire("Error", error.message, "error");
-                    });
-                }
-            });
-        }
-
-        function updateTaskCompletion(taskId, taskDescription) {
-            Swal.fire({
-                title: "¿Deseas marcar como completada la tarea?",
-                html: ` <a style="font-weight: 700;">Esta acción no es reversible</a><br/><br/>
-                        Nombre de la tarea: "${taskDescription}"`,
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonText: "Sí, completar",
-                cancelButtonText: "Cancelar"
-            }).then(result => {
-                if (result.isConfirmed) {
-                    const tarea = { id: taskId, descripcion: taskDescription, completada: true };
-
-                    fetch(`/tareas/completar`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(tarea)
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            Swal.fire("Tarea completada", "","success");
-                        } else {
-                            throw new Error("Error al actualizar el estado de la tarea.");
-                        }
-                    })
-                    .catch(error => {
-                        Swal.fire("Error", error.message, "error");
-                    });
-                } else {
-                    reloadTasks();
-                }
-            });
-        }
-
-        // Cambiar a usar el evento de submit en lugar de click
-        document.querySelector("form.todo-input").addEventListener("submit", (e) => {
-            e.preventDefault();
-            const descripcion = taskInput.value.trim();
-
-            if (descripcion === "") {
-                Swal.fire("Error", "El nombre de la tarea no puede estar vacío.", "error");
-                return;
             }
 
-            Swal.fire({
-                title: "Confirmar tarea",
-                html: `¿Estás seguro de agregar la tarea? <br/> <br/> Nombre de la tarea: ${descripcion}`,
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonText: "Sí, agregar",
-                cancelButtonText: "Cancelar"
-            }).then(result => {
-                if (result.isConfirmed) {
-                    const tarea = { descripcion, completada: false };
+            // Función para confirmar y actualizar la tarea
+            function confirmAndUpdateTask(updatedDescription, taskId, taskText, editInput) {
+                Swal.fire({
+                    title: '¿Seguro que quieres actualizar la tarea?',
+                    text: `Dejarás la tarea con la descripción: "${updatedDescription}"`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, actualizar',
+                    cancelButtonText: 'No, cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        taskText.textContent = updatedDescription;
+                        updateTask(taskId, updatedDescription);
+                        taskText.style.display = "block"; 
+                        editInput.style.display = "none"; 
+                    } else {
+                        editInput.style.display = "none";
+                        taskText.style.display = "block"; 
+                    }
+                });
+            }
 
-                    fetch("/tareas/crear", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(tarea)
+            function updateTask(taskId, updatedDescription) {
+                fetch("/tareas/cambiarNombre", {
+                    method: "POST", 
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: taskId,
+                        descripcion: updatedDescription 
                     })
-                    .then(response => {
-                        if (!response.ok) throw new Error("Error al agregar la tarea.");
-                        reloadTasks();  // Recargar tareas después de agregar una nueva
-                    })
-                    .catch(error => {
-                        Swal.fire("Error", error.message, "error");
-                    });
+                })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire("Tarea actualizada", "El nombre de la tarea se ha actualizado correctamente.", "success");
+                    } else {
+                        throw new Error("Error al actualizar la tarea.");
+                    }
+                })
+                .catch(error => {
+                    Swal.fire("Error", error.message, "error");
+                });
+            }
+
+            function deleteTask(taskId, listItem) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción no se puede deshacer.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch("/tareas/eliminar", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ id: taskId })
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                taskList.removeChild(listItem);
+                                Swal.fire("Tarea eliminada", "","success");
+                            } else {
+                                throw new Error("Error al eliminar la tarea.");
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire("Error", error.message, "error");
+                        });
+                    }
+                });
+            }
+
+            function updateTaskCompletion(taskId, taskDescription) {
+                Swal.fire({
+                    title: "¿Deseas marcar como completada la tarea?",
+                    html: ` <a style="font-weight: 700;">Esta acción no es reversible</a><br/><br/>
+                            Nombre de la tarea: "${taskDescription}"`,
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, completar",
+                    cancelButtonText: "Cancelar"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        const tarea = { id: taskId, descripcion: taskDescription, completada: true };
+
+                        fetch(`/tareas/completar`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(tarea)
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                Swal.fire("Tarea completada", "","success");
+                            } else {
+                                throw new Error("Error al actualizar el estado de la tarea.");
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire("Error", error.message, "error");
+                        });
+                    } else {
+                        reloadTasks();
+                    }
+                });
+            }
+
+            // Cambiar a usar el evento de submit en lugar de click
+            document.querySelector("form.todo-input").addEventListener("submit", (e) => {
+                e.preventDefault();
+                const descripcion = taskInput.value.trim();
+
+                if (descripcion === "") {
+                    Swal.fire("Error", "El nombre de la tarea no puede estar vacío.", "error");
+                    return;
                 }
-            });
-        });
 
-        loadTasks();
-    });
-</script>
+                Swal.fire({
+                    title: "Confirmar tarea",
+                    html: `¿Estás seguro de agregar la tarea? <br/> <br/> Nombre de la tarea: ${descripcion}`,
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, agregar",
+                    cancelButtonText: "Cancelar"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        const tarea = { descripcion, completada: false };
+
+                        fetch("/tareas/crear", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(tarea)
+                        })
+                        .then(response => {
+                            if (!response.ok){
+                                throw new Error("Error al agregar la tarea.");
+                            } else{
+                                Swal.fire("Tarea agregada a la lista", "","success");
+                                reloadTasks();  // Recargar tareas después de agregar una nueva
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire("Error", error.message, "error");
+                        });
+                    }
+                });
+            });
+
+            loadTasks();
+        });
+    </script>

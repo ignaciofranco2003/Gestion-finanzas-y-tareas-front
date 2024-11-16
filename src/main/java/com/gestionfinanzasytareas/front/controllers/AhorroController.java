@@ -62,7 +62,7 @@ public class AhorroController {
     
             // Obtener la respuesta
             int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            if (responseCode == HttpURLConnection.HTTP_CREATED) {
                 return ResponseEntity.ok("Ahorro creado exitosamente.");
             } else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permiso para crear ahorro.");
@@ -175,6 +175,8 @@ public class AhorroController {
 
             // Leer la respuesta del endpoint
             int responseCode = connection.getResponseCode();
+
+
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 StringBuilder response = new StringBuilder();
@@ -185,11 +187,13 @@ public class AhorroController {
                 }
                 reader.close();
 
-                System.out.println(response);
-                // Convertir la respuesta JSON en una lista de mapas
-                List<Map<String, Object>> ingresos = new ObjectMapper().readValue(response.toString(), List.class);
+                // Convertir la respuesta JSON en un mapa de claves y valores
+                Map<String, Object> responseMap = new ObjectMapper().readValue(response.toString(), Map.class);
 
-                return ResponseEntity.ok(ingresos);
+                // Extraer solo el contenido de "data"
+                List<Map<String, Object>> ahorros = (List<Map<String, Object>>) responseMap.get("data");
+
+                return ResponseEntity.ok(ahorros);
             } else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             } else {

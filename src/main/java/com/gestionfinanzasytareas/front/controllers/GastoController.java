@@ -54,11 +54,13 @@ public class GastoController {
                 }
                 reader.close();
 
-                System.out.println(response);
-                // Convertir la respuesta JSON en una lista de mapas
-                List<Map<String, Object>> ingresos = new ObjectMapper().readValue(response.toString(), List.class);
+                // Convertir la respuesta JSON en un mapa de claves y valores
+                Map<String, Object> responseMap = new ObjectMapper().readValue(response.toString(), Map.class);
+                
+                // Extraer solo el contenido de "data"
+                List<Map<String, Object>> gastos = (List<Map<String, Object>>) responseMap.get("data");
 
-                return ResponseEntity.ok(ingresos);
+                return ResponseEntity.ok(gastos);
             } else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             } else {
@@ -97,7 +99,7 @@ public class GastoController {
     
             // Obtener el código de respuesta
             int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            if (responseCode == HttpURLConnection.HTTP_CREATED) {
                 return ResponseEntity.ok("Tarea creada exitosamente.");
             } else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
                 // Manejar respuesta de acceso denegado

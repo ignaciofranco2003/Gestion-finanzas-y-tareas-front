@@ -21,18 +21,34 @@ public class AdminController {
         @GetMapping
         public String homeAdmin(Model model) {
                 UserSessionManager sessionManager = UserSessionManager.getInstance();
-                if (sessionManager.isActiveSession() && "ADMIN".equals(sessionManager.getActiveUserRole())) {
-                        return "admin_dashboard.html";
+                
+                // Verifica si la sesión está activa
+                if (!sessionManager.isActiveSession()) {
+                model.addAttribute("error", "Tu sesión ha caducado. Inicia sesión nuevamente.");
+                return "login";
+                }
+
+                // Verifica si el rol del usuario es "ADMIN"
+                if ("ADMIN".equals(sessionManager.getActiveUserRole())) {
+                return "admin_dashboard.html";
                 } else {
-                        model.addAttribute("error", "No tienes permiso para acceder a esta página.");
-                        return "login";
+                model.addAttribute("error", "No tienes permiso para acceder a esta página.");
+                return "login";
                 }
         }
 
         @GetMapping("/ingresos")
         public String homeAdminingresos(Model model) {
                 UserSessionManager sessionManager = UserSessionManager.getInstance();
-                if (sessionManager.isActiveSession() && "ADMIN".equals(sessionManager.getActiveUserRole())) {
+
+                // Verifica si la sesión está activa
+                if (!sessionManager.isActiveSession()) {
+                        model.addAttribute("error", "Tu sesión ha caducado. Inicia sesión nuevamente.");
+                        return "login";
+                }
+
+                // Verifica si el rol del usuario es "ADMIN"
+                if ("ADMIN".equals(sessionManager.getActiveUserRole())) {
                         return "admin-ingresos.html";
                 } else {
                         model.addAttribute("error", "No tienes permiso para acceder a esta página.");
@@ -43,11 +59,19 @@ public class AdminController {
         @GetMapping("/gastos")
         public String homeAdmingastos(Model model) {
                 UserSessionManager sessionManager = UserSessionManager.getInstance();
-                if (sessionManager.isActiveSession() && "ADMIN".equals(sessionManager.getActiveUserRole())) {
-                        return "admin-gastos.html";
+                
+                // Verifica si la sesión está activa
+                if (!sessionManager.isActiveSession()) {
+                model.addAttribute("error", "Tu sesión ha caducado. Inicia sesión nuevamente.");
+                return "login";
+                }
+
+                // Verifica si el rol del usuario es "ADMIN"
+                if ("ADMIN".equals(sessionManager.getActiveUserRole())) {
+                return "admin-gastos.html";
                 } else {
-                        model.addAttribute("error", "No tienes permiso para acceder a esta página.");
-                        return "login";
+                model.addAttribute("error", "No tienes permiso para acceder a esta página.");
+                return "login";
                 }
         }
 
@@ -147,10 +171,6 @@ public class AdminController {
                 try {
                         String INGRESO_URL =  "http://localhost:8080/backof/categorias-ingreso/"+req.getId();
 
-                        // // Crear el cuerpo de la solicitud en JSON
-                        // JSONObject requestBody = new JSONObject();
-                        // requestBody.put("nombre", req.getNombre());
-
                         // Crear conexión HTTP
                         HttpURLConnection connection = (HttpURLConnection) new URL(INGRESO_URL).openConnection();
                         connection.setRequestMethod("DELETE");
@@ -169,19 +189,21 @@ public class AdminController {
                         } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
                                 // Manejar respuesta de acceso denegado
                                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("El nombre de la categoria ya existe");
-                        } else {
+                        }else if (responseCode == HttpURLConnection.HTTP_CONFLICT) {
+                                // Manejar otro tipo de categoria referenciada
+                                return ResponseEntity.status(HttpStatus.CONFLICT)
+                                        .body("Las categorias referenciadas no se pueden eliminar");
+                        }else{
                                 // Manejar otro tipo de errores
                                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                                .body("Error al crear la categoria.: " + responseCode);
+                                                .body("Error al eliminar la categoria.: " + responseCode);
                         }
                 } catch (Exception e) {
                         // Manejar excepciones
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                        .body("Error al crear la categoria: " + e.getMessage());
+                                        .body("Error al eliminar la categoria: " + e.getMessage());
                 }
         }
-
-
 
         @PostMapping("/gastos/crear")
         public ResponseEntity<String> enviargastos(@RequestParam String nombre) {
@@ -273,15 +295,8 @@ public class AdminController {
         @PostMapping("/gastos/eliminar")
         public ResponseEntity<String> eliminarGasto(@RequestBody Request req) {
                 UserSessionManager sessionManager = UserSessionManager.getInstance();
-
-                System.out.println(req.getId());
-
                 try {
                         String INGRESO_URL =  "http://localhost:8080/backof/categorias-gasto/"+req.getId();
-
-                        // // Crear el cuerpo de la solicitud en JSON
-                        // JSONObject requestBody = new JSONObject();
-                        // requestBody.put("nombre", req.getNombre());
 
                         // Crear conexión HTTP
                         HttpURLConnection connection = (HttpURLConnection) new URL(INGRESO_URL).openConnection();
@@ -301,15 +316,19 @@ public class AdminController {
                         } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
                                 // Manejar respuesta de acceso denegado
                                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("El nombre de la categoria ya existe");
-                        } else {
+                        } else if (responseCode == HttpURLConnection.HTTP_CONFLICT) {
+                                // Manejar otro tipo de categoria referenciada
+                                return ResponseEntity.status(HttpStatus.CONFLICT)
+                                        .body("Las categorias referenciadas no se pueden eliminar");
+                        }else{
                                 // Manejar otro tipo de errores
                                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                                .body("Error al crear la categoria.: " + responseCode);
+                                                .body("Error al eliminar la categoria.: " + responseCode);
                         }
                 } catch (Exception e) {
                         // Manejar excepciones
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                        .body("Error al crear la categoria: " + e.getMessage());
+                                        .body("Error al eliminar la categoria: " + e.getMessage());
                 }
         }
 

@@ -63,15 +63,15 @@ public class IngresoController {
 
             // Obtener el código de respuesta
             int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+
+            if (responseCode == HttpURLConnection.HTTP_CREATED) {
                 return ResponseEntity.ok("Ingreso creado exitosamente.");
             } else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
                 // Manejar respuesta de acceso denegado
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permiso para crear ingresos.");
             } else {
                 // Manejar otro tipo de errores
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Error al crear el ingreso: " + responseCode);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el ingreso: " + responseCode);
             }
         } catch (Exception e) {
             // Manejar excepciones
@@ -101,10 +101,12 @@ public class IngresoController {
                 }
                 reader.close();
 
-                System.out.println(response);
-                // Convertir la respuesta JSON en una lista de mapas
-                List<Map<String, Object>> ingresos = new ObjectMapper().readValue(response.toString(), List.class);
-
+                // Convertir la respuesta JSON en un mapa de claves y valores
+                Map<String, Object> responseMap = new ObjectMapper().readValue(response.toString(), Map.class);
+                
+                // Extraer solo el contenido de "data"
+                List<Map<String, Object>> ingresos = (List<Map<String, Object>>) responseMap.get("data");
+                
                 return ResponseEntity.ok(ingresos);
             } else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
