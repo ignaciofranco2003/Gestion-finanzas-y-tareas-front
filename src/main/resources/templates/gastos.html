@@ -192,6 +192,18 @@
         justify-content: center; /* Centra horizontalmente */
         align-items: center; /* Centra verticalmente */
     }
+
+            /* Elimina las flechas en navegadores basados en WebKit */
+    #montoGasto[type="number"]::-webkit-inner-spin-button,
+    #montoGasto[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Elimina las flechas*/
+    #montoGasto[type="number"] {
+        -moz-appearance: textfield;
+    }
 </style> 
 
 </head>
