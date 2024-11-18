@@ -62,16 +62,16 @@ public class AdminController {
                 
                 // Verifica si la sesión está activa
                 if (!sessionManager.isActiveSession()) {
-                model.addAttribute("error", "Tu sesión ha caducado. Inicia sesión nuevamente.");
-                return "login";
+                        model.addAttribute("error", "Tu sesión ha caducado. Inicia sesión nuevamente.");
+                        return "login";
                 }
 
                 // Verifica si el rol del usuario es "ADMIN"
                 if ("ADMIN".equals(sessionManager.getActiveUserRole())) {
-                return "admin-gastos.html";
+                        return "admin-gastos.html";
                 } else {
-                model.addAttribute("error", "No tienes permiso para acceder a esta página.");
-                return "login";
+                        model.addAttribute("error", "No tienes permiso para acceder a esta página.");
+                        return "login";
                 }
         }
 
@@ -98,14 +98,16 @@ public class AdminController {
 
                         // Obtener el código de respuesta
                         int responseCode = connection.getResponseCode();
-                        System.out.println(responseCode);
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                                 return ResponseEntity.ok("Categoria de ingreso creado exitosamente.");
                         } else if (responseCode == HttpURLConnection.HTTP_CONFLICT) {
                                 // Manejar respuesta de acceso denegado
-                                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                return ResponseEntity.status(HttpStatus.CONFLICT)
                                                 .body("El nombre de la categoria ya existe");
-                        } else {
+                        }else if(responseCode == HttpURLConnection.HTTP_FORBIDDEN){
+                                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                                .body("No tienes permiso para realizar esta accion");
+                        }else {
                                 // Manejar otro tipo de errores
                                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                                 .body("Error al crear la categoria.: " + responseCode);
@@ -143,7 +145,6 @@ public class AdminController {
 
                         // Obtener el código de respuesta
                         int responseCode = connection.getResponseCode();
-                        System.out.println(responseCode);
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                                 return ResponseEntity.ok("Categoria de ingreso editada exitosamente.");
                         } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
@@ -183,7 +184,6 @@ public class AdminController {
 
                         // Obtener el código de respuesta
                         int responseCode = connection.getResponseCode();
-                        System.out.println(responseCode);
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                                 return ResponseEntity.ok("Categoria de ingreso eliminada exitosamente.");
                         } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
@@ -228,13 +228,15 @@ public class AdminController {
 
                         // Obtener el código de respuesta
                         int responseCode = connection.getResponseCode();
-                        System.out.println(responseCode);
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                                 return ResponseEntity.ok("Categoria de ingreso creado exitosamente.");
                         } else if (responseCode == HttpURLConnection.HTTP_CONFLICT) {
                                 // Manejar respuesta de acceso denegado
-                                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                return ResponseEntity.status(HttpStatus.CONFLICT)
                                                 .body("El nombre de la categoria ya existe");
+                        }else if(responseCode == HttpURLConnection.HTTP_FORBIDDEN){
+                                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                                .body("No tienes permiso para realizar esta accion");
                         } else {
                                 // Manejar otro tipo de errores
                                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -273,7 +275,6 @@ public class AdminController {
 
                         // Obtener el código de respuesta
                         int responseCode = connection.getResponseCode();
-                        System.out.println(responseCode);
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                                 return ResponseEntity.ok("Categoria de ingreso editada exitosamente.");
                         } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
@@ -310,7 +311,6 @@ public class AdminController {
 
                         // Obtener el código de respuesta
                         int responseCode = connection.getResponseCode();
-                        System.out.println(responseCode);
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                                 return ResponseEntity.ok("Categoria de ingreso eliminada exitosamente.");
                         } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {

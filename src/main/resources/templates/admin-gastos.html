@@ -202,11 +202,11 @@
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  </body>
+</body>
 </html>
 <script>
 
-  document.getElementById("logoutButton").addEventListener("click", function(event) {
+    document.getElementById("logoutButton").addEventListener("click", function(event) {
                 event.preventDefault(); // Evita la redirección inmediata
                 // Muestra el SweetAlert en lugar de confirm
                 Swal.fire({
@@ -227,12 +227,13 @@
                 });
             });
 
-  function volver(){
+    function volver(){
     window.location.href = "/home-admin";
   }
 
-  document.getElementById('nueva').addEventListener('click', function(event) {
+    document.getElementById('nueva').addEventListener('click', function(event) {
     event.preventDefault(); // Evita el comportamiento predeterminado del enlace
+
     Swal.fire({
         title: "AGREGAR CATEGORIA",
         html: '<input id="nombreCategoria" type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs" minlength="4" style="width: 20rem; margin-top:2rem;">',
@@ -250,9 +251,10 @@
         preConfirm: () => {
             const nombre = document.getElementById('nombreCategoria').value;
 
+            // Validación de longitud de nombre
             if (nombre.length < 4 || nombre.length > 20) {
                 Swal.showValidationMessage("El nombre de la categoría debe tener entre 4 y 20 caracteres");
-                return;
+                return; // Evita continuar si la validación falla
             }
 
             // Mostrar mensaje de confirmación antes de proceder con la solicitud
@@ -269,14 +271,14 @@
                     return fetch('/home-admin/gastos/crear', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded' // Tipo de contenido
+                            'Content-Type': 'application/x-www-form-urlencoded', // Tipo de contenido
                         },
                         body: new URLSearchParams({ nombre }) // Convertimos el nombre a parámetros de URL
                     })
                     .then(response => {
                         if (!response.ok) {
                             // Maneja diferentes tipos de respuesta de error
-                            if (response.status === 403) {
+                            if (response.status === 409) {
                                 throw new Error("El nombre de la categoría ya existe");
                             } else {
                                 throw new Error("Error al crear la categoría: " + response.statusText);
@@ -285,7 +287,8 @@
                         return response.text(); // Devuelve la respuesta como texto
                     })
                     .catch(error => {
-                        Swal.showValidationMessage(`Error: ${error.message}`); // Muestra un mensaje de error en la alerta
+                        Swal.fire('¡Error!', error.message, 'error'); // Muestra el error en un Swal
+                        return false; // Evita que se cierre el modal
                     });
                 }
             });
@@ -293,12 +296,13 @@
     }).then((result) => {
         if (result.isConfirmed) {
             // Aquí puedes manejar la respuesta de éxito si es necesario
-            Swal.fire('¡Éxito!', result.value, 'success');
+            Swal.fire('¡Éxito!', 'Categoría agregada correctamente.', 'success');
         }
     });
 });
 
-  document.getElementById('editar').addEventListener('click', function(event) {
+
+    document.getElementById('editar').addEventListener('click', function(event) {
     event.preventDefault(); // Evita el comportamiento predeterminado del enlace
 
     // Hacer una petición para obtener las categorías
@@ -405,7 +409,7 @@
         });
 });
 
-  document.getElementById('eliminar').addEventListener('click', function(event) {
+    document.getElementById('eliminar').addEventListener('click', function(event) {
       event.preventDefault(); // Evita el comportamiento predeterminado del enlace
 
       // Hacer una petición para obtener las categorías

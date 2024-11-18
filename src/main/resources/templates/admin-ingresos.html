@@ -177,7 +177,7 @@
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="../PANTALLA DE INICIO/js/temaOscuro.js"></script>
+    <!-- <script src="../PANTALLA DE INICIO/js/temaOscuro.js"></script> -->
 
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -211,72 +211,76 @@
             window.location.href = "/home-admin";
         }
 
-    document.getElementById('nueva').addEventListener('click', function(event) {
-        event.preventDefault(); // Evita el comportamiento predeterminado del enlace
-        Swal.fire({
-            title: "AGREGAR CATEGORIA",
-            html: '<input id="nombreCategoria" type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs" minlength="4" style="width: 20rem; margin-top:2rem;">',
-            showConfirmButton: true,
-            showCancelButton: true,
-            showCloseButton: true,
-            focusConfirm: false,
-            confirmButtonText: 'AGREGAR',
-            cancelButtonText: `CANCELAR`,
-            customClass: {
-                popup: 'fondo',
-                confirmButton: 'boton-confirmar',
-                cancelButton: 'boton-cancelar'
-            },
-            preConfirm: () => {
-                const nombre = document.getElementById('nombreCategoria').value;
+    document.getElementById('nueva').addEventListener('click', function (event) {
+    event.preventDefault();
 
-                if (nombre.length < 4 || nombre.length > 20) {
-                    Swal.showValidationMessage("El nombre de la categoría debe tener entre 4 y 20 caracteres");
-                    return;
-                }
+    Swal.fire({
+        title: "AGREGAR CATEGORIA",
+        html: '<input id="nombreCategoria" type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs" minlength="4" style="width: 20rem; margin-top:2rem;">',
+        showConfirmButton: true,
+        showCancelButton: true,
+        showCloseButton: true,
+        focusConfirm: false,
+        confirmButtonText: 'AGREGAR',
+        cancelButtonText: `CANCELAR`,
+        customClass: {
+            popup: 'fondo',
+            confirmButton: 'boton-confirmar',
+            cancelButton: 'boton-cancelar'
+        },
+        preConfirm: () => {
+            const nombre = document.getElementById('nombreCategoria').value;
 
-                // Mostrar mensaje de confirmación antes de proceder con la solicitud
-                return Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: `Estás a punto de agregar la categoría "${nombre}".`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, agregar',
-                    cancelButtonText: 'Cancelar'
-                }).then(confirmResult => {
-                    if (confirmResult.isConfirmed) {
-                        // Realizar la petición al servidor si el usuario confirma
-                        return fetch('/home-admin/ingresos/crear', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded' // Tipo de contenido
-                            },
-                            body: new URLSearchParams({ nombre }) // Convertimos el nombre a parámetros de URL
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                // Maneja diferentes tipos de respuesta de error
-                                if (response.status === 403) {
-                                    throw new Error("El nombre de la categoría ya existe");
-                                } else {
-                                    throw new Error("Error al crear la categoría: " + response.statusText);
-                                }
+            if (nombre.length < 4 || nombre.length > 20) {
+                Swal.showValidationMessage("El nombre de la categoría debe tener entre 4 y 20 caracteres");
+                return false; // Asegura que no continúa si hay error
+            }
+
+            // Confirmación adicional antes de enviar la solicitud
+            return Swal.fire({
+                title: '¿Estás seguro?',
+                text: `Estás a punto de agregar la categoría "${nombre}".`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, agregar',
+                cancelButtonText: 'Cancelar'
+            }).then((confirmResult) => {
+                if (confirmResult.isConfirmed) {
+                    // Realizar la petición al servidor si el usuario confirma
+                    return fetch('/home-admin/ingresos/crear', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({ nombre }),
+                    })
+                    .then((response) => {
+                        if (!response.ok) {
+                            if (response.status === 409) {
+                                throw new Error("El nombre de la categoría ya existe.");
+                            } else {
+                                throw new Error(`Error al crear la categoría: ${response.status}`);
                             }
-                            return response.text(); // Devuelve la respuesta como texto
-                        })
-                        .catch(error => {
-                            Swal.showValidationMessage(`Error: ${error.message}`); // Muestra un mensaje de error en la alerta
-                        });
-                    }
-                });
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Aquí puedes manejar la respuesta de éxito si es necesario
-                Swal.fire('¡Éxito!', result.value, 'success');
-            }
-        });
+                        }
+                        return response.text(); // Respuesta exitosa
+                    })
+                    .catch((error) => {
+                        // Mostrar un mensaje de error si la solicitud falla
+                        Swal.fire('¡Error!', error.message, 'error');
+                        return false; // No permite cerrar el modal
+                    });
+                } else {
+                    return false; // Si el usuario cancela, no continúa con la solicitud
+                }
+            });
+        },
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Muestra un mensaje adicional de confirmación después de crear la categoría
+            Swal.fire('¡Éxito!', 'Categoría agregada correctamente.', 'success')
+        }
     });
+});
 
     document.getElementById('editar').addEventListener('click', function(event) {
         event.preventDefault(); // Evita el comportamiento predeterminado del enlace
