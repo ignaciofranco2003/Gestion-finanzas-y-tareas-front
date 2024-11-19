@@ -282,6 +282,12 @@
         window.location.href = "/home-usuario/gastos-mensuales";
     }
 
+    // Evita que se ingresen caracteres especiales en el campo de monto
+    document.getElementById('montoGasto').addEventListener('input', function(e) {
+        // Reemplaza cualquier símbolo o letra que no sea número o punto decimal
+        e.target.value = e.target.value(/[^0-9.]/g, '');
+    });
+
     document.getElementById("logoutButton").addEventListener("click", function(event) {
             event.preventDefault(); // Evita la redirección inmediata
             // Muestra el SweetAlert en lugar de confirm
@@ -313,10 +319,25 @@
                 // Obtener los valores del formulario
                 const categoriaGasto = document.getElementById('categoriaGasto');
                 const montoGasto = document.getElementById('montoGasto').value;
+                const monto = parseFloat(document.getElementById('montoGasto').value);
 
                 // Validar los datos del formulario
-                if (!categoriaGasto.value || !montoGasto) {
-                    Swal.fire('Error', 'Por favor, complete todos los campos.', 'error');
+                if (!categoriaGasto.value) {
+                    Swal.fire({
+                        title: "Por favor, seleccione una categoría",
+                        icon: "warning",
+                        confirmButtonText: "OK"
+                    });
+                    // Swal.fire('Error', 'Por favor, complete todos los campos.', 'error');
+                    return;
+                }
+
+                if(isNaN(monto)){
+                    Swal.fire({
+                        title: "Por favor, ingrese un monto",
+                        icon: "warning",
+                        confirmButtonText: "OK"
+                    });
                     return;
                 }
 

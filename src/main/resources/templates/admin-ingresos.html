@@ -231,6 +231,11 @@
         preConfirm: () => {
             const nombre = document.getElementById('nombreCategoria').value;
 
+            if(nombre.length === 0){
+                Swal.showValidationMessage("Complete este campo");
+                return false; // Asegura que no continúa si hay error
+            }
+
             if (nombre.length < 4 || nombre.length > 20) {
                 Swal.showValidationMessage("El nombre de la categoría debe tener entre 4 y 20 caracteres");
                 return false; // Asegura que no continúa si hay error
@@ -460,7 +465,7 @@
                                     } else if (response.status === 404) {
                                         throw new Error('La categoría no existe');
                                     } else if (response.status === 409) {
-                                        throw new Error('Las categorías referenciadas no se pueden eliminar');
+                                        throw new Error('No se puede eliminar la categoría porque está asociada a ingresos existentes.');
                                     } else {
                                         throw new Error('Error al eliminar la categoría');
                                     }

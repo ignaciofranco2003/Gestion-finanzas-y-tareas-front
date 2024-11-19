@@ -162,7 +162,7 @@
                             <div class="invalid-tooltip">
                                 Por favor! selecciona una categoría de ingreso.
                             </div>
-                            <input type="number" class="form-control mt-4" placeholder="$999" id="montoIngreso" min="0" step="0" required>
+                            <input type="number" class="form-control mt-4" placeholder="$999" id="montoIngreso" min="0" required>
                             <div class="invalid-tooltip">
                                 Por favor, ingresa un número válido.
                             </div>
@@ -187,6 +187,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         
         function volver(){
@@ -214,14 +215,13 @@
             });
         });
 
-
         // Evita que se ingresen caracteres especiales en el campo de monto
         document.getElementById('montoIngreso').addEventListener('input', function(e) {
             // Reemplaza cualquier símbolo o letra que no sea número o punto decimal
-            e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+            e.target.value = e.target.value(/[^0-9.]/g, '');
         });
 
-                // Lógica para manejar el envío del formulario
+        // Lógica para manejar el envío del formulario
         document.getElementById('ingresoForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Evitar el envío por defecto del formulario
 
@@ -446,8 +446,6 @@
                 console.error("Hubo un problema con la solicitud de ingresos:", error);
             }
         }
-
-
 
         async function obtenerCategorias() {
             const endpointCategorias = 'http://localhost:8080/backof/categorias-ingreso/all';

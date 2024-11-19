@@ -122,10 +122,6 @@ public class AdminController {
         @PostMapping("/ingresos/editar")
         public ResponseEntity<String> editarIngreso(@RequestBody Request req) {
                 UserSessionManager sessionManager = UserSessionManager.getInstance();
-
-                System.out.println(req.getId());
-                System.out.println(req.getNombre());
-
                 try {
                         String INGRESO_URL =  "http://localhost:8080/backof/categorias-ingreso/"+req.getId();
 
@@ -166,8 +162,6 @@ public class AdminController {
         @PostMapping("/ingresos/eliminar")
         public ResponseEntity<String> eliminarIngreso(@RequestBody Request req) {
                 UserSessionManager sessionManager = UserSessionManager.getInstance();
-
-                System.out.println(req.getId());
 
                 try {
                         String INGRESO_URL =  "http://localhost:8080/backof/categorias-ingreso/"+req.getId();
@@ -253,8 +247,6 @@ public class AdminController {
         public ResponseEntity<String> editarGastos(@RequestBody Request req) {
                 UserSessionManager sessionManager = UserSessionManager.getInstance();
 
-                System.out.println(req.getId());
-                System.out.println(req.getNombre());
 
                 try {
                         String INGRESO_URL =  "http://localhost:8080/backof/categorias-gasto/"+req.getId();

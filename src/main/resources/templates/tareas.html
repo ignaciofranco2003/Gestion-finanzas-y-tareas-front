@@ -243,7 +243,7 @@
 </body>
 </html>
     <script>
-            document.getElementById("logoutButton").addEventListener("click", function(event) {
+        document.getElementById("logoutButton").addEventListener("click", function(event) {
                     event.preventDefault(); // Evita la redirección inmediata
                     // Muestra el SweetAlert en lugar de confirm
                     Swal.fire({
@@ -264,17 +264,17 @@
                     });
             });
 
-            function volver(){
+        function volver(){
                 window.location.href = "/home-usuario";
             }
 
-            document.addEventListener("DOMContentLoaded", () => {
-                const taskInput = document.getElementById("taskInput");
-                const addTaskBtn = document.getElementById("addTaskBtn");
-                const taskList = document.getElementById("taskList");
+        document.addEventListener("DOMContentLoaded", () => {
+            const taskInput = document.getElementById("taskInput");
+            const addTaskBtn = document.getElementById("addTaskBtn");
+            const taskList = document.getElementById("taskList");
 
                 // Función para cargar tareas al iniciar
-                function loadTasks() {
+            function loadTasks() {
                     fetch("/tareas/obtener", {
                         method: "GET",
                         headers: {
@@ -364,6 +364,8 @@
                 const editInput = listItem.querySelector(".edit-input");
                 const editButton = listItem.querySelector(".edit");
 
+
+
                 if (editInput.style.display === "none" || !editInput.style.display) {
                     editInput.style.display = "block"; // Mostrar el input de edición
                     taskText.style.display = "none";  // Ocultar el texto de la tarea
@@ -392,6 +394,11 @@
 
             // Función para confirmar y actualizar la tarea
             function confirmAndUpdateTask(updatedDescription, taskId, taskText, editInput) {
+
+                if(updatedDescription.length < 4 || updatedDescription.length > 35){
+                    Swal.fire('Error', 'El nombre debe tener entre 4 y 35 caracteres', 'error');
+                    return;
+                }
                 Swal.fire({
                     title: '¿Seguro que quieres actualizar la tarea?',
                     text: `Dejarás la tarea con la descripción: "${updatedDescription}"`,
@@ -511,6 +518,11 @@
 
                 if (descripcion === "") {
                     Swal.fire("Error", "El nombre de la tarea no puede estar vacío.", "error");
+                    return;
+                }
+
+                if (descripcion.length < 4 || descripcion.length > 35) {
+                    Swal.fire('Error', 'El nombre debe tener entre 4 y 35 caracteres', 'error');
                     return;
                 }
 

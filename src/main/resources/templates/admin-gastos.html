@@ -236,7 +236,7 @@
 
     Swal.fire({
         title: "AGREGAR CATEGORIA",
-        html: '<input id="nombreCategoria" type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs" minlength="4" style="width: 20rem; margin-top:2rem;">',
+        html: '<input id="nombreCategoria" type="text" placeholder="NOMBRE DE LA CATEGORIA" class="inputs" minlength="4" style="width: 20rem; margin-top:2rem;" required>',
         showConfirmButton: true,
         showCancelButton: true,
         showCloseButton: true,
@@ -250,6 +250,11 @@
         },
         preConfirm: () => {
             const nombre = document.getElementById('nombreCategoria').value;
+
+            if(nombre.length === 0){
+                Swal.showValidationMessage("Complete este campo");
+                return false; // Asegura que no continúa si hay error
+            }
 
             // Validación de longitud de nombre
             if (nombre.length < 4 || nombre.length > 20) {
@@ -300,7 +305,6 @@
         }
     });
 });
-
 
     document.getElementById('editar').addEventListener('click', function(event) {
     event.preventDefault(); // Evita el comportamiento predeterminado del enlace
@@ -482,7 +486,7 @@
                                   } else if (response.status === 404) {
                                       throw new Error('La categoría no existe');
                                   } else if (response.status === 409) {
-                                      throw new Error('Las categorías referenciadas no se pueden eliminar');
+                                      throw new Error('No se puede eliminar la categoría porque está asociada a gastos existentes.');
                                   } else {
                                       throw new Error('Error al eliminar la categoría');
                                   }

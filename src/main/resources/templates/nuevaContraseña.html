@@ -103,7 +103,7 @@
             <span class="input-group-text">
                 <i class="bi bi-lock"></i>
             </span>
-            <input type="password" class="password-input" id="newPassword" name="nuevaPassword" required placeholder="Nueva contraseña" minlength="4">
+            <input type="password" class="password-input" id="newPassword" name="nuevaPassword" required placeholder="Nueva contraseña" >
             <span class="input-group-text toggle-password" data-target="newPassword">
                 <i class="bi bi-eye" style="font-size: 1.5rem;"></i>
             </span>
@@ -115,7 +115,7 @@
             <span class="input-group-text">
                 <i class="bi bi-lock"></i>
             </span>
-            <input type="password" class="password-input" id="confirmPassword" name="confirmPassword" required placeholder="Confirma nueva contraseña" minlength="4">
+            <input type="password" class="password-input" id="confirmPassword" name="confirmPassword" required placeholder="Confirma nueva contraseña">
             <span class="input-group-text toggle-password" data-target="confirmPassword">
                 <i class="bi bi-eye" style="font-size: 1.5rem;"></i>
             </span>
@@ -124,7 +124,7 @@
 
         <!--Boton-->
         <div class="mt-4">
-            <button type="submit" class="btn btn-primary" id="boton-reest" onclick="resetPassword()">REESTABLECER</button>
+            <button type="submit" class="btn btn-primary" id="boton-reest" onclick="resetPassword()">RESTABLECER</button>
         </div>
     </form>
 
@@ -206,11 +206,11 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Éxito',
-                        text: 'Contraseña cambiada exitosamente, redirigiendo a inicio.'
+                        text: 'Contraseña restablecida exitosamente, redirigiendo a inicio.'
                     }).then(() => {
                         setTimeout(() => {
                             window.location.href = '/login'; // Redirige al login después del cambio de contraseña
-                        }, 1500); // Retraso de 1 segundo
+                        }, 1500);
                     });
                 } else {
                     Swal.fire({

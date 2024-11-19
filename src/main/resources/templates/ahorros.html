@@ -236,204 +236,94 @@
     </div>
 
 <script>
-        function volver(){
-            window.location.href = "/home-usuario";
-        }
+    function volver(){
+        window.location.href = "/home-usuario";
+    }
 
-        document.getElementById("logoutButton").addEventListener("click", function(event) {
-            event.preventDefault(); // Evita la redirección inmediata
-            // Muestra el SweetAlert en lugar de confirm
-            Swal.fire({
-                title: "¿Deseas cerrar la sesión?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, cerrar sesión',
-                cancelButtonText: 'Cancelar',
-                customClass: {
-                    popup: 'custom-popup' // Añade una clase personalizada
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "/logout"; // Redirige solo si se confirma
-                }
-            });
+    document.getElementById("logoutButton").addEventListener("click", function(event) {
+        event.preventDefault(); // Evita la redirección inmediata
+        // Muestra el SweetAlert en lugar de confirm
+        Swal.fire({
+            title: "¿Deseas cerrar la sesión?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                popup: 'custom-popup' // Añade una clase personalizada
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/logout"; // Redirige solo si se confirma
+            }
         });
+    });
 
-        // Llamar a obtenerAhorros cuando la página se cargue o cuando sea necesario
-        document.addEventListener("DOMContentLoaded", obtenerAhorros);
-        function actualizarLista() {
-            fetch('/ahorros/obtener', {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const lista = document.getElementById("listaAhorros");
-                lista.innerHTML = "";  // Limpiar la lista antes de actualizar
+    // Llamar a obtenerAhorros cuando la página se cargue o cuando sea necesario
+    document.addEventListener("DOMContentLoaded", obtenerAhorros);
+    function actualizarLista() {
+        fetch('/ahorros/obtener', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const lista = document.getElementById("listaAhorros");
+            lista.innerHTML = "";  // Limpiar la lista antes de actualizar
 
-                data.forEach((ahorro) => {
-                    const li = document.createElement("li");
-                    li.textContent = `${ahorro.nombreAhorro}: $${ahorro.montoActual} / $${ahorro.montoFinal}`;
+            data.forEach((ahorro) => {
+                const li = document.createElement("li");
+                li.textContent = `${ahorro.nombreAhorro}: $${ahorro.montoActual} / $${ahorro.montoFinal}`;
 
-                    const boton = document.createElement("span");
-                    if (ahorro.montoActual >= ahorro.montoFinal) {
-                        ahorro.completado = true;
-                        boton.className = "btn-complete bi bi-check-circle-fill";
-                    } else {
-                        boton.className = "btn-add-money bi bi-plus-circle";
-                        boton.onclick = () => agregarDinero(ahorro.id,ahorro.nombreAhorro, ahorro.montoActual, ahorro.montoFinal);
-                    }
-
-                    li.appendChild(boton);
-                    lista.appendChild(li);
-                });
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                Swal.fire('Error', 'No se pudo obtener la lista de ahorros', 'error');
-            });
-        }
-
-        function obtenerAhorros() {
-            fetch("/ahorros/obtener", {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${sessionStorage.getItem("JWT")}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data && Array.isArray(data)) {
-                    actualizarLista(); 
+                const boton = document.createElement("span");
+                if (ahorro.montoActual >= ahorro.montoFinal) {
+                    ahorro.completado = true;
+                    boton.className = "btn-complete bi bi-check-circle-fill";
                 } else {
-                    console.error("Error al obtener los ahorros:", data);
+                    boton.className = "btn-add-money bi bi-plus-circle";
+                    boton.onclick = () => agregarDinero(ahorro.id,ahorro.nombreAhorro, ahorro.montoActual, ahorro.montoFinal);
                 }
-            })
-            .catch(error => {
-                console.error("Error en la solicitud de obtener ahorros:", error);
+
+                li.appendChild(boton);
+                lista.appendChild(li);
             });
-        }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            Swal.fire('Error', 'No se pudo obtener la lista de ahorros', 'error');
+        });
+    }
 
-        function nuevoAhorro() {
-                    Swal.fire({
-                        title: 'Nuevo Ahorro',
-                        html: `
-                            <input id="nombreAhorro" class="custom-input mt-4 mb-4" placeholder="Nombre del ahorro" style="color:black;" required>
-                            <input id="montoMetaAhorro" type="number" min="0" class="custom-input" placeholder="Monto meta" required>
-                        `,
-                        confirmButtonText: 'Guardar',
-                        showCancelButton: true,
-                        cancelButtonText: 'Cancelar',
-                        customClass: {
-                            popup: 'custom-alert', // Clase para personalizar el contenedor principal
-                        },
-                        didOpen: () => {
-                            const montoMetaInput = document.getElementById('montoMetaAhorro');
-                            // Prohibir caracteres no válidos en tiempo real
-                            montoMetaInput.addEventListener('input', (event) => {
-                                event.target.value = event.target.value.replace(/[^0-9.]/g, ''); // Solo permite números y punto
-                            });
-                        },
-                        preConfirm: () => {
-                            const nombre = document.getElementById('nombreAhorro').value.trim(); // Elimina espacios adicionales
-                            const montoMeta = parseFloat(document.getElementById('montoMetaAhorro').value);
+    function obtenerAhorros() {
+        fetch("/ahorros/obtener", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("JWT")}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data && Array.isArray(data)) {
+                actualizarLista(); 
+            } else {
+                console.error("Error al obtener los ahorros:", data);
+            }
+        })
+        .catch(error => {
+            console.error("Error en la solicitud de obtener ahorros:", error);
+        });
+    }
 
-                            if (!nombre && isNaN(montoMeta)) {
-                                Swal.showValidationMessage('Por favor, ingrese un nombre y un monto.');
-                                return false;
-                            }
-
-                            if (!nombre) {
-                                Swal.showValidationMessage('Por favor, ingrese un nombre');
-                                return false;
-                            }
-
-                            if (isNaN(montoMeta)) {
-                                Swal.showValidationMessage('Por favor, ingrese un monto');
-                                return false;
-                            }
-
-                            if (nombre.length < 4 || nombre.length > 30) {
-                                Swal.showValidationMessage('El nombre debe tener entre 4 y 30 caracteres');
-                                return false;
-                            }
-
-                            // Si ambas validaciones son correctas, retorna el objeto
-                            return { nombre, montoMeta };
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            const { nombre, montoMeta } = result.value;
-
-                            fetch("/ahorros/crear", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                    nombreahorro: nombre,
-                                    montoactual: 0,
-                                    montometa: montoMeta
-                                })
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    Swal.fire('Éxito', 'Ahorro creado exitosamente', 'success');
-                                    obtenerAhorros(); // Refrescar lista de ahorros
-                                } else {
-                                    return response.json().then(data => {
-                                        throw new Error(data.message || "Error al crear el ahorro");
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error("Error:", error);
-                                Swal.fire('Error', error.message || 'No se pudo crear el ahorro', 'error');
-                            });
-                        }
-                    });
-                }
-
-        function editarAhorro() {
-            // Obtener la lista de ahorros desde el endpoint
-            fetch('/ahorros/obtener', {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${sessionStorage.getItem("JWT")}`
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("Error al obtener la lista de ahorros");
-                }
-            })
-            .then(data => {
-                // Crear las opciones del select con la lista de ahorros obtenida
-                const opciones = data.map(ahorro => `<option value="${ahorro.id}">${ahorro.nombreAhorro}</option>`).join('');
-                
-                // Mostrar SweetAlert con el formulario de edición
+    function nuevoAhorro() {
                 Swal.fire({
-                    title: 'Selecciona el ahorro a editar',
-                    html: ` 
-                        <div>
-                            <select id="ahorroSeleccionado" class="custom-input mb-4">
-                                <option value="" disabled selected>Seleccione un ahorro</option> 
-                                ${opciones}
-                            </select>
-                            <select id="opcionEdicion" class="custom-input mb-4">
-                                <option value="" disabled selected>Seleccione la edición</option>
-                                <option value="nombre">Editar nombre</option>
-                                <option value="montoFinal">Editar monto final</option>
-                            </select>
-                            <div id="campoEdicion"></div>
-                        </div>
+                    title: 'Nuevo Ahorro',
+                    html: `
+                        <input id="nombreAhorro" class="custom-input mt-4 mb-4" placeholder="Nombre del ahorro" style="color:black;" required>
+                        <input id="montoMetaAhorro" type="number" min="0" class="custom-input" placeholder="Monto meta" required>
                     `,
                     confirmButtonText: 'Guardar',
                     showCancelButton: true,
@@ -442,345 +332,454 @@
                         popup: 'custom-alert', // Clase para personalizar el contenedor principal
                     },
                     didOpen: () => {
-                        const opcionEdicion = document.getElementById('opcionEdicion');
-                        const campoEdicion = document.getElementById('campoEdicion');
-
-                        // Escuchar cuando el usuario seleccione una opción
-                        opcionEdicion.addEventListener('change', () => {
-                            // Limpiar el campo dinámico antes de insertar el nuevo input
-                            campoEdicion.innerHTML = '';
-
-                            if (opcionEdicion.value === 'nombre') {
-                                // Crear un campo de texto para editar el nombre
-                                campoEdicion.innerHTML = `<input id="nuevoValor" class="custom-input" placeholder="Nuevo nombre" type="text" required>`;
-                            } else if (opcionEdicion.value === 'montoFinal') {
-                                // Crear un campo numérico para editar el monto final
-                                campoEdicion.innerHTML = `<input id="nuevoValor" class="custom-input" placeholder="Nuevo monto final" type="number" min="0" required>`;
-                                
-                                // Validar los caracteres del monto final (permitir solo números y un punto)
-                                const montoMetaInput = document.getElementById('nuevoValor');
-                                montoMetaInput.addEventListener('input', (event) => {
-                                    let value = event.target.value.replace(/[^0-9.]/g, ''); // Remover caracteres no numéricos
-                                    
-                                    // Asegurarse de que solo haya un punto decimal
-                                    if ((value.match(/\./g) || []).length > 1) {
-                                        value = value.slice(0, value.lastIndexOf('.'));  // Eliminar el punto extra
-                                    }
-                                    event.target.value = value; // Asignar el valor limpio
-                                });
-                            }
+                        const montoMetaInput = document.getElementById('montoMetaAhorro');
+                        // Prohibir caracteres no válidos en tiempo real
+                        montoMetaInput.addEventListener('input', (event) => {
+                            // Reemplaza cualquier símbolo o letra que no sea número o punto decimal
+                            e.target.value = e.target.value(/[^0-9.]/g, '');
                         });
                     },
                     preConfirm: () => {
-                        const ahorroId = document.getElementById('ahorroSeleccionado').value;
-                        const opcionEdicion = document.getElementById('opcionEdicion').value;
-                        const nuevoValor = document.getElementById('nuevoValor') ? document.getElementById('nuevoValor').value : "";
+                        const nombre = document.getElementById('nombreAhorro').value.trim(); // Elimina espacios adicionales
+                        const montoMeta = parseFloat(document.getElementById('montoMetaAhorro').value);
 
-                        if (!ahorroId) {
-                            Swal.showValidationMessage('Por favor, selecciona un ahorro.');
+                        if (!nombre && isNaN(montoMeta)) {
+                            Swal.showValidationMessage('Por favor, ingrese un nombre y un monto.');
                             return false;
                         }
 
-                        if (!opcionEdicion) {
-                            Swal.showValidationMessage('Por favor, selecciona una opción de edición.');
+                        if (!nombre) {
+                            Swal.showValidationMessage('Por favor, ingrese un nombre');
                             return false;
                         }
 
-                        if (nuevoValor.trim() === "") {
-                            Swal.showValidationMessage('Por favor, ingresa un nuevo valor válido.');
+                        if (nombre.length < 4 || nombre.length > 20) {
+                            Swal.showValidationMessage('El nombre debe tener entre 4 y 20 caracteres');
                             return false;
                         }
 
-                        // Obtener el ahorro seleccionado
-                        const ahorroSeleccionado = data.find(a => a.id == ahorroId);
-                        
-                        // Si se edita el montoFinal
-                        if (opcionEdicion === 'montoFinal') {
-                            const montoFinalNuevo = parseFloat(nuevoValor);
-                            if (montoFinalNuevo < ahorroSeleccionado.montoActual) {
-                                Swal.showValidationMessage('El monto final no puede ser menor al monto actual.');
-                                return false;
+                        if (isNaN(montoMeta)) {
+                            Swal.showValidationMessage('Por favor, ingrese un monto');
+                            return false;
+                        }
+
+                        // Si ambas validaciones son correctas, retorna el objeto
+                        return { nombre, montoMeta };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const { nombre, montoMeta } = result.value;
+
+                        fetch("/ahorros/crear", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                nombreahorro: nombre,
+                                montoactual: 0,
+                                montometa: montoMeta
+                            })
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                Swal.fire('Éxito', 'Ahorro creado exitosamente', 'success');
+                                obtenerAhorros(); // Refrescar lista de ahorros
+                            } else {
+                                return response.json().then(data => {
+                                    throw new Error(data.message || "Error al crear el ahorro");
+                                });
                             }
-
-                            // Confirmar antes de actualizar
-                            return Swal.fire({
-                                title: '¿Estás seguro de actualizar este ahorro?',
-                                text: "Se cambiará el monto final.",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Sí, actualizar',
-                                cancelButtonText: 'No, cancelar'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // Preparar el cuerpo de la solicitud para actualizar el ahorro
-                                    const requestBody = {
-                                        id: ahorroId,
-                                        nombreAhorro: ahorroSeleccionado.nombreAhorro,
-                                        montoActual: ahorroSeleccionado.montoActual,
-                                        montoFinal: montoFinalNuevo,
-                                        completado: ahorroSeleccionado.montoActual >= montoFinalNuevo
-                                    };
-
-                                    // Llamar a la API para actualizar el ahorro
-                                    return fetch(`/ahorros/editar`, {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                        },
-                                        body: JSON.stringify(requestBody)
-                                    })
-                                    .then(response => {
-                                        if (response.ok) {
-                                            Swal.fire('Éxito', 'Ahorro actualizado exitosamente', 'success');
-                                            obtenerAhorros(); // Refrescar lista de ahorros
-                                            return response.json(); // Procesar respuesta
-                                        } else {
-                                            throw new Error("No se pudo actualizar el ahorro");
-                                        }
-                                    })
-                                }
-                            });
-                        } else {
-
-                            if (nuevoValor.length < 4 || nuevoValor.length > 30) {
-                                Swal.showValidationMessage('El nombre debe tener entre 4 y 30 caracteres');
-                                return false;
-                            }
-                            // Si se edita el nombre
-                            const requestBody = {
-                                id: ahorroId,
-                                nombreAhorro: nuevoValor,
-                                montoActual: ahorroSeleccionado.montoActual,
-                                montoFinal: ahorroSeleccionado.montoFinal,
-                                completado: ahorroSeleccionado.montoActual >= ahorroSeleccionado.montoFinal
-                            };
-
-                            // Confirmación antes de enviar la solicitud para el nombre
-                            return Swal.fire({
-                                title: '¿Estás seguro de actualizar este ahorro?',
-                                text: "Se cambiará el nombre del ahorro.",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Sí, actualizar',
-                                cancelButtonText: 'No, cancelar'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // Llamada a la API para actualizar el ahorro
-                                    return fetch(`/ahorros/editar`, {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                        },
-                                        body: JSON.stringify(requestBody)
-                                    })
-                                    .then(response => {
-                                        if (response.ok) {
-                                            Swal.fire('Éxito', 'Ahorro actualizado exitosamente', 'success');
-                                            obtenerAhorros(); // Refrescar lista de ahorros
-                                            return response.json(); // Procesar respuesta
-                                        } else {
-                                            throw new Error("No se pudo actualizar el ahorro");
-                                        }
-                                    })
-                                }
-                            });
-                        }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            Swal.fire('Error', error.message || 'No se pudo crear el ahorro', 'error');
+                        });
                     }
                 });
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                Swal.fire('Error', 'No se pudo obtener la lista de ahorros', 'error');
-            });
-        }
+            }
 
-        function eliminarAhorro() {
-            // Obtener la lista de ahorros desde el endpoint
-            fetch('/ahorros/obtener', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${sessionStorage.getItem("JWT")}`
-                }
-            })
-            .then(response => response.json())
-            .then(ahorros => {
-                if (ahorros.length === 0) {
-                    Swal.fire('Error', 'No hay ahorros para eliminar', 'error');
-                    return;
-                }
-
-                // Crear opciones para el selector a partir de la lista de ahorros
-                const opciones = ahorros.map(ahorro => 
-                    `<option value="${ahorro.id}" data-nombre="${ahorro.nombreAhorro}">${ahorro.nombreAhorro}</option>`
-                ).join('');
-
-                // Mostrar SweetAlert con el selector de ahorros
-                Swal.fire({
-                    title: 'Selecciona un ahorro para eliminar',
-                    html: `
-                        <select id="ahorroSeleccionado" class="custom-input">
-                            <option value="" disabled selected>Seleccione un ahorro</option>
+    function editarAhorro() {
+        // Obtener la lista de ahorros desde el endpoint
+        fetch('/ahorros/obtener', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("JWT")}`
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Error al obtener la lista de ahorros");
+            }
+        })
+        .then(data => {
+            // Crear las opciones del select con la lista de ahorros obtenida
+            const opciones = data.map(ahorro => `<option value="${ahorro.id}">${ahorro.nombreAhorro}</option>`).join('');
+            
+            // Mostrar SweetAlert con el formulario de edición
+            Swal.fire({
+                title: 'Selecciona el ahorro a editar',
+                html: ` 
+                    <div>
+                        <select id="ahorroSeleccionado" class="custom-input mb-4">
+                            <option value="" disabled selected>Seleccione un ahorro</option> 
                             ${opciones}
                         </select>
-                    `,
-                    showCancelButton: true,
-                    confirmButtonText: 'Eliminar',
-                    cancelButtonText: 'Cancelar',
-                    customClass: {
-                        popup: 'custom-alert', // Clase para personalizar el contenedor principal
-                    },
-                    preConfirm: () => {
-                        const selectElement = document.getElementById('ahorroSeleccionado');
-                        const ahorroId = selectElement.value;
-                        const ahorroNombre = selectElement.options[selectElement.selectedIndex]?.dataset.nombre;
-
-                        if (!ahorroId) {
-                            Swal.showValidationMessage('Por favor, selecciona un ahorro');
-                            return false;
-                        }
-                        return { id: ahorroId, nombre: ahorroNombre };
-                    }
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        const { id, nombre } = result.value;
-
-                        // Confirmación final
-                        Swal.fire({
-                            title: `¿Desea eliminar el ahorro "${nombre}"?`,
-                            text: "Esta acción no es reversible",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Eliminar',
-                            cancelButtonText: 'Cancelar',
-                        }).then(confirmResult => {
-                            if (confirmResult.isConfirmed) {
-                                // Realizar la solicitud DELETE a la API con el id del ahorro seleccionado
-                                fetch(`/ahorros/eliminar/${id}`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Authorization': `Bearer ${sessionStorage.getItem("JWT")}`
-                                    }
-                                })
-                                .then(response => {
-                                    if (response.ok) {
-                                        Swal.fire('Eliminado', 'Ahorro eliminado exitosamente', 'success');
-                                        obtenerAhorros(); // Función para actualizar la lista de ahorros
-                                    } else {
-                                        Swal.fire('Error', 'No se pudo eliminar el ahorro', 'error');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error("Error:", error);
-                                    Swal.fire('Error', 'Ocurrió un error al eliminar el ahorro', 'error');
-                                });
-                            }
-                        });
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("Error al obtener los ahorros:", error);
-                Swal.fire('Error', 'No se pudo obtener la lista de ahorros', 'error');
-            });
-        }
-
-        function agregarDinero(ahorroId, nombreAhorro, montoActual, montoFinal) {
-            Swal.fire({
-                title: 'Agregar Dinero',
-                html: `
-                    <input id="cantidadDinero" type="number" class="custom-input mt-3" placeholder="Cantidad a agregar" min="0" required>
+                        <select id="opcionEdicion" class="custom-input mb-4">
+                            <option value="" disabled selected>Seleccione la edición</option>
+                            <option value="nombre">Editar nombre</option>
+                            <option value="montoFinal">Editar monto final</option>
+                        </select>
+                        <div id="campoEdicion"></div>
+                    </div>
                 `,
-                confirmButtonText: 'Agregar',
-                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Guardar',
                 showCancelButton: true,
+                cancelButtonText: 'Cancelar',
                 customClass: {
                     popup: 'custom-alert', // Clase para personalizar el contenedor principal
                 },
                 didOpen: () => {
-                    const montoMetaInput = document.getElementById('cantidadDinero');
-                    // Prohibir caracteres no válidos en tiempo real
-                    montoMetaInput.addEventListener('input', (event) => {
-                        event.target.value = event.target.value.replace(/[^0-9.]/g, ''); // Solo permite números y punto
+                    const opcionEdicion = document.getElementById('opcionEdicion');
+                    const campoEdicion = document.getElementById('campoEdicion');
+
+                    // Escuchar cuando el usuario seleccione una opción
+                    opcionEdicion.addEventListener('change', () => {
+                        // Limpiar el campo dinámico antes de insertar el nuevo input
+                        campoEdicion.innerHTML = '';
+
+                        if (opcionEdicion.value === 'nombre') {
+                            // Crear un campo de texto para editar el nombre
+                            campoEdicion.innerHTML = `<input id="nuevoValor" class="custom-input" placeholder="Nuevo nombre" type="text" required>`;
+                        } else if (opcionEdicion.value === 'montoFinal') {
+                            // Crear un campo numérico para editar el monto final
+                            campoEdicion.innerHTML = `<input id="nuevoValor" class="custom-input" placeholder="Nuevo monto final" type="number" min="0" required>`;
+                            
+                            // Validar los caracteres del monto final (permitir solo números y un punto)
+                            const montoMetaInput = document.getElementById('nuevoValor');
+
+
+                            montoMetaInput.addEventListener('input', (event) => {
+                                // Reemplaza cualquier símbolo o letra que no sea número o punto decimal
+                                e.target.value = e.target.value(/[^0-9.]/g, '');
+                            });
+                        }
                     });
                 },
                 preConfirm: () => {
-                    const cantidad = parseFloat(document.getElementById('cantidadDinero').value);
+                    const ahorroId = document.getElementById('ahorroSeleccionado').value;
+                    const opcionEdicion = document.getElementById('opcionEdicion').value;
+                    const nuevoValor = document.getElementById('nuevoValor') ? document.getElementById('nuevoValor').value : "";
 
-                    // Verificar que la cantidad sea válida y mayor a 0
-                    if (!cantidad || isNaN(cantidad) || cantidad <= 0) {
-                        Swal.showValidationMessage('Por favor, ingrese una cantidad válida.');
+                    if (!ahorroId) {
+                        Swal.showValidationMessage('Por favor, selecciona un ahorro.');
                         return false;
                     }
 
-                    // Verificar que la cantidad no exceda el monto necesario para completar el ahorro
-                    const montoRestante = montoFinal - montoActual;
-                    if (cantidad > montoRestante) {
-                        Swal.showValidationMessage(`No puede agregar más de ${montoRestante.toFixed(2)} para completar el ahorro.`);
+                    if (!opcionEdicion) {
+                        Swal.showValidationMessage('Por favor, selecciona una opción de edición.');
                         return false;
                     }
 
-                    // Crear mensaje de confirmación que incluya el monto y el nombre del ahorro
-                    const mensajeConfirmacion = `¿Agregar ${cantidad.toFixed(2)} al ahorro "${nombreAhorro}"?`;
+                    if (nuevoValor.trim() === "") {
+                        Swal.showValidationMessage('Por favor, ingresa un nuevo valor válido.');
+                        return false;
+                    }
+
+                    // Obtener el ahorro seleccionado
+                    const ahorroSeleccionado = data.find(a => a.id == ahorroId);
                     
-                    return Swal.fire({
-                        title: 'Confirmar Agregado',
-                        text: mensajeConfirmacion,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Sí, agregar',
-                        cancelButtonText: 'Cancelar'
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            return cantidad; // Si se confirma, devolver la cantidad para continuar
+                    // Si se edita el montoFinal
+                    if (opcionEdicion === 'montoFinal') {
+                        const montoFinalNuevo = parseFloat(nuevoValor);
+                        if (montoFinalNuevo < ahorroSeleccionado.montoActual) {
+                            Swal.showValidationMessage('El monto final no puede ser menor al monto actual.');
+                            return false;
                         }
-                        return false; // Si se cancela, no hacer nada
-                    });
+
+                        // Confirmar antes de actualizar
+                        return Swal.fire({
+                            title: '¿Estás seguro de actualizar este ahorro?',
+                            text: "Se cambiará el monto final.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, actualizar',
+                            cancelButtonText: 'No, cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Preparar el cuerpo de la solicitud para actualizar el ahorro
+                                const requestBody = {
+                                    id: ahorroId,
+                                    nombreAhorro: ahorroSeleccionado.nombreAhorro,
+                                    montoActual: ahorroSeleccionado.montoActual,
+                                    montoFinal: montoFinalNuevo,
+                                    completado: ahorroSeleccionado.montoActual >= montoFinalNuevo
+                                };
+
+                                // Llamar a la API para actualizar el ahorro
+                                return fetch(`/ahorros/editar`, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(requestBody)
+                                })
+                                .then(response => {
+                                    if (response.ok) {
+                                        Swal.fire('Éxito', 'Ahorro actualizado exitosamente', 'success');
+                                        obtenerAhorros(); // Refrescar lista de ahorros
+                                        return response.json(); // Procesar respuesta
+                                    } else {
+                                        throw new Error("No se pudo actualizar el ahorro");
+                                    }
+                                })
+                            }
+                        });
+                    } else {
+
+                        if (nuevoValor.length < 4 || nuevoValor.length > 20) {
+                            Swal.showValidationMessage('El nombre debe tener entre 4 y 20 caracteres');
+                            return false;
+                        }
+                        // Si se edita el nombre
+                        const requestBody = {
+                            id: ahorroId,
+                            nombreAhorro: nuevoValor,
+                            montoActual: ahorroSeleccionado.montoActual,
+                            montoFinal: ahorroSeleccionado.montoFinal,
+                            completado: ahorroSeleccionado.montoActual >= ahorroSeleccionado.montoFinal
+                        };
+
+                        // Confirmación antes de enviar la solicitud para el nombre
+                        return Swal.fire({
+                            title: '¿Estás seguro de actualizar este ahorro?',
+                            text: "Se cambiará el nombre del ahorro.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Sí, actualizar',
+                            cancelButtonText: 'No, cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Llamada a la API para actualizar el ahorro
+                                return fetch(`/ahorros/editar`, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify(requestBody)
+                                })
+                                .then(response => {
+                                    if (response.ok) {
+                                        Swal.fire('Éxito', 'Ahorro actualizado exitosamente', 'success');
+                                        obtenerAhorros(); // Refrescar lista de ahorros
+                                        return response.json(); // Procesar respuesta
+                                    } else {
+                                        throw new Error("No se pudo actualizar el ahorro");
+                                    }
+                                })
+                            }
+                        });
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            Swal.fire('Error', 'No se pudo obtener la lista de ahorros', 'error');
+        });
+    }
+
+    function eliminarAhorro() {
+        // Obtener la lista de ahorros desde el endpoint
+        fetch('/ahorros/obtener', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sessionStorage.getItem("JWT")}`
+            }
+        })
+        .then(response => response.json())
+        .then(ahorros => {
+            if (ahorros.length === 0) {
+                Swal.fire('Error', 'No hay ahorros para eliminar', 'error');
+                return;
+            }
+
+            // Crear opciones para el selector a partir de la lista de ahorros
+            const opciones = ahorros.map(ahorro => 
+                `<option value="${ahorro.id}" data-nombre="${ahorro.nombreAhorro}">${ahorro.nombreAhorro}</option>`
+            ).join('');
+
+            // Mostrar SweetAlert con el selector de ahorros
+            Swal.fire({
+                title: 'Selecciona un ahorro para eliminar',
+                html: `
+                    <select id="ahorroSeleccionado" class="custom-input">
+                        <option value="" disabled selected>Seleccione un ahorro</option>
+                        ${opciones}
+                    </select>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                    popup: 'custom-alert', // Clase para personalizar el contenedor principal
+                },
+                preConfirm: () => {
+                    const selectElement = document.getElementById('ahorroSeleccionado');
+                    const ahorroId = selectElement.value;
+                    const ahorroNombre = selectElement.options[selectElement.selectedIndex]?.dataset.nombre;
+
+                    if (!ahorroId) {
+                        Swal.showValidationMessage('Por favor, selecciona un ahorro');
+                        return false;
+                    }
+                    return { id: ahorroId, nombre: ahorroNombre };
                 }
             }).then(result => {
                 if (result.isConfirmed) {
-                    const cantidad = parseFloat(result.value);
+                    const { id, nombre } = result.value;
 
-                    // Actualizar los valores del ahorro con la nueva cantidad
-                    const montoFinalActualizado = montoActual + cantidad; // Sumar al monto actual
-                    const completado = montoFinalActualizado >= montoFinal;
-
-                    // Configurar el cuerpo de la solicitud según el formato requerido por el endpoint
-                    const requestBody = {
-                        id: ahorroId,
-                        nombreAhorro: nombreAhorro,
-                        montoActual: montoFinalActualizado, // Nuevo monto actual
-                        montoFinal: montoFinal, // Mantener el monto final
-                        completado: completado // Marcar como completado si alcanza el monto final
-                    };
-
-                    // Llamada al servidor para agregar el dinero al ahorro
-                    fetch('/ahorros/editar', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestBody)
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            // Actualizar la lista de ahorros con el nuevo monto
-                            actualizarLista();
-                            Swal.fire('Éxito', 'Dinero agregado exitosamente', 'success');
-                        } else {
-                            Swal.fire('Error', 'No se pudo agregar el dinero', 'error');
+                    // Confirmación final
+                    Swal.fire({
+                        title: `¿Desea eliminar el ahorro "${nombre}"?`,
+                        text: "Esta acción no es reversible",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Eliminar',
+                        cancelButtonText: 'Cancelar',
+                    }).then(confirmResult => {
+                        if (confirmResult.isConfirmed) {
+                            // Realizar la solicitud DELETE a la API con el id del ahorro seleccionado
+                            fetch(`/ahorros/eliminar/${id}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${sessionStorage.getItem("JWT")}`
+                                }
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    Swal.fire('Eliminado', 'Ahorro eliminado exitosamente', 'success');
+                                    obtenerAhorros(); // Función para actualizar la lista de ahorros
+                                } else {
+                                    Swal.fire('Error', 'No se pudo eliminar el ahorro', 'error');
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error:", error);
+                                Swal.fire('Error', 'Ocurrió un error al eliminar el ahorro', 'error');
+                            });
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire('Error', 'Hubo un problema al agregar el dinero', 'error');
                     });
                 }
             });
-        }
+        })
+        .catch(error => {
+            console.error("Error al obtener los ahorros:", error);
+            Swal.fire('Error', 'No se pudo obtener la lista de ahorros', 'error');
+        });
+    }
 
-    </script>
+    function agregarDinero(ahorroId, nombreAhorro, montoActual, montoFinal) {
+        Swal.fire({
+            title: 'Agregar Dinero',
+            html: `
+                <input id="cantidadDinero" type="number" class="custom-input mt-3" placeholder="Cantidad a agregar" min="0" required>
+            `,
+            confirmButtonText: 'Agregar',
+            cancelButtonText: 'Cancelar',
+            showCancelButton: true,
+            customClass: {
+                popup: 'custom-alert', // Clase para personalizar el contenedor principal
+            },
+            didOpen: () => {
+                const montoMetaInput = document.getElementById('cantidadDinero');
+                // Prohibir caracteres no válidos en tiempo real
+                montoMetaInput.addEventListener('input', (event) => {
+                    // Reemplaza cualquier símbolo o letra que no sea número o punto decimal
+                    e.target.value = e.target.value(/[^0-9.]/g, '');
+                });
+            },
+            preConfirm: () => {
+                const cantidad = parseFloat(document.getElementById('cantidadDinero').value);
+
+                // Verificar que la cantidad sea válida y mayor a 0
+                if (!cantidad || isNaN(cantidad) || cantidad <= 0) {
+                    Swal.showValidationMessage('Por favor, ingrese una cantidad válida.');
+                    return false;
+                }
+
+                // Verificar que la cantidad no exceda el monto necesario para completar el ahorro
+                const montoRestante = montoFinal - montoActual;
+                if (cantidad > montoRestante) {
+                    Swal.showValidationMessage(`No puede agregar más de ${montoRestante.toFixed(2)} para completar el ahorro.`);
+                    return false;
+                }
+
+                // Crear mensaje de confirmación que incluya el monto y el nombre del ahorro
+                const mensajeConfirmacion = `¿Agregar ${cantidad.toFixed(2)} al ahorro "${nombreAhorro}"?`;
+                
+                return Swal.fire({
+                    title: 'Confirmar Agregado',
+                    text: mensajeConfirmacion,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, agregar',
+                    cancelButtonText: 'Cancelar'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        return cantidad; // Si se confirma, devolver la cantidad para continuar
+                    }
+                    return false; // Si se cancela, no hacer nada
+                });
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                const cantidad = parseFloat(result.value);
+
+                // Actualizar los valores del ahorro con la nueva cantidad
+                const montoFinalActualizado = montoActual + cantidad; // Sumar al monto actual
+                const completado = montoFinalActualizado >= montoFinal;
+
+                // Configurar el cuerpo de la solicitud según el formato requerido por el endpoint
+                const requestBody = {
+                    id: ahorroId,
+                    nombreAhorro: nombreAhorro,
+                    montoActual: montoFinalActualizado, // Nuevo monto actual
+                    montoFinal: montoFinal, // Mantener el monto final
+                    completado: completado // Marcar como completado si alcanza el monto final
+                };
+
+                // Llamada al servidor para agregar el dinero al ahorro
+                fetch('/ahorros/editar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Actualizar la lista de ahorros con el nuevo monto
+                        actualizarLista();
+                        Swal.fire('Éxito', 'Dinero agregado exitosamente', 'success');
+                    } else {
+                        Swal.fire('Error', 'No se pudo agregar el dinero', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Hubo un problema al agregar el dinero', 'error');
+                });
+            }
+        });
+    }
+
+</script>
 </body>
 </html>
 

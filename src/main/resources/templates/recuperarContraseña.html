@@ -132,6 +132,12 @@
             background-color: #1BB521; /* Cambia el color cuando ambos campos están completos */
             color: white; /* Cambia el color del texto si es necesario */
         }
+
+        .error-msg {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+        }
     </style>
 
     <!--Navbar-->
@@ -147,9 +153,11 @@
             <span class="input-group-text">
                 <i class="bi bi-envelope-at"></i>
             </span>
-            <input type="email" class="email-input" id="username" name="username" required placeholder="Email">
+            <input type="text" class="email-input" id="username" name="username" required placeholder="Email">
+
         </div>
         
+        <span class="error-msg" id="emailError">Por favor ingresa un email válido. Ej: ejemplo@ejemplo.com</span>
         <!-- Contenedor para mensaje de error -->
         <span id="error-message">Correo no válido o no registrado.</span>
 
@@ -182,9 +190,31 @@
 
         emailInput.addEventListener('input', checkInputs);
 
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        // Validar el formato del email solo al enviar el formulario
+        function validateEmail() {
+            const emailValue = emailInput.value.trim();
+            if (!emailPattern.test(emailValue)) {
+                emailError.style.display = 'block'; // Muestra el mensaje de error
+                emailInput.classList.add('is-invalid'); // Estilo de error
+                return false; // Email inválido
+            } else {
+                emailError.style.display = 'none'; // Oculta el mensaje de error
+                emailInput.classList.remove('is-invalid'); // Elimina estilo de error
+                return true; // Email válido
+            }
+        }
+
+
         async function enviartoken(event) {
             event.preventDefault(); // Evita el envío del formulario por defecto
             const email = document.getElementById("username").value;
+
+            if (!validateEmail()) {
+                event.preventDefault(); // Cancela el envío si el email no es válido
+                return false;
+            }
 
             try {
                 // Primera solicitud para verificar el email
