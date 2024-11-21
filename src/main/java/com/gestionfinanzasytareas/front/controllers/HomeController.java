@@ -103,9 +103,9 @@ public class HomeController {
         }
     }
 
-    @GetMapping("/pablo")
+    @GetMapping("/GOAT")
     public String pablo() {
-        return "pablo.html";
+        return "goat.html";
     }
 
     @SuppressWarnings("deprecation")
