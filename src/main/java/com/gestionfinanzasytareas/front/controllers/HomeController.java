@@ -103,6 +103,11 @@ public class HomeController {
         }
     }
 
+    @GetMapping("/pablo")
+    public String pablo() {
+        return "pablo.html";
+    }
+
     @SuppressWarnings("deprecation")
     @PostMapping("/verificar-codigo")
     public ResponseEntity<String> verificarCodigo(@RequestParam String email, @RequestParam String codigo) {
