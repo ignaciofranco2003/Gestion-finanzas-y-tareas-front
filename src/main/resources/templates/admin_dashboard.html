@@ -147,26 +147,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
-        document.getElementById("logoutButton").addEventListener("click", function(event) {
-            event.preventDefault(); // Evita la redirección inmediata
-            // Muestra el SweetAlert en lugar de confirm
-            Swal.fire({
-                title: "¿Deseas cerrar la sesión?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, cerrar sesión',
-                cancelButtonText: 'Cancelar',
-                customClass: {
-                    popup: 'custom-popup' // Añade una clase personalizada
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "/logout"; // Redirige solo si se confirma
-                }
-            });
-        });
+      document.getElementById("logoutButton").addEventListener("click", function(event) {
+          event.preventDefault(); // Evita la redirección inmediata
+          // Muestra el SweetAlert en lugar de confirm
+          Swal.fire({
+              title: "¿Deseas cerrar la sesión?",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Sí, cerrar sesión',
+              cancelButtonText: 'Cancelar',
+              customClass: {
+                  popup: 'custom-popup' // Añade una clase personalizada
+              }
+          }).then((result) => {
+              if (result.isConfirmed) {
+                fetch('/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                  window.location.href = "/login";
+              }
+          });
+      });
         function ingresos(){
             window.location.href = "/home-admin/ingresos";
         }

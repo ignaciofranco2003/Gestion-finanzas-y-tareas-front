@@ -241,25 +241,31 @@
     }
 
     document.getElementById("logoutButton").addEventListener("click", function(event) {
-        event.preventDefault(); // Evita la redirección inmediata
-        // Muestra el SweetAlert en lugar de confirm
-        Swal.fire({
-            title: "¿Deseas cerrar la sesión?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, cerrar sesión',
-            cancelButtonText: 'Cancelar',
-            customClass: {
-                popup: 'custom-popup' // Añade una clase personalizada
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "/logout"; // Redirige solo si se confirma
-            }
-        });
-    });
+          event.preventDefault(); // Evita la redirección inmediata
+          // Muestra el SweetAlert en lugar de confirm
+          Swal.fire({
+              title: "¿Deseas cerrar la sesión?",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Sí, cerrar sesión',
+              cancelButtonText: 'Cancelar',
+              customClass: {
+                  popup: 'custom-popup' // Añade una clase personalizada
+              }
+          }).then((result) => {
+              if (result.isConfirmed) {
+                fetch('/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                  window.location.href = "/login";
+              }
+          });
+      });
 
     // Llamar a obtenerAhorros cuando la página se cargue o cuando sea necesario
     document.addEventListener("DOMContentLoaded", obtenerAhorros);

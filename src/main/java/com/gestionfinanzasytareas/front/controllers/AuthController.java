@@ -39,7 +39,7 @@ public class AuthController {
         return "login.html"; // Retorna la vista de login.html
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public String logout() {
         UserSessionManager sessionManager = UserSessionManager.getInstance();
         sessionManager.endSession();
