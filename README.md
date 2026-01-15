@@ -35,3 +35,7 @@ Para compilar el proyecto, utiliza el siguiente comando:
 
 ```bash
 mvn clean install
+```
+## Notas
+
+Este proyecto es el FrontEnd de https://github.com/ignaciofranco2003/Gestor-finanzas-y-tareas
