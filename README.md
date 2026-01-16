@@ -40,6 +40,8 @@ mvn clean install
 
 Este proyecto es el FrontEnd de https://github.com/ignaciofranco2003/Gestor-finanzas-y-tareas
 
+---
+
 ## Capturas del sistema (Usuario)
 
 **Login**
